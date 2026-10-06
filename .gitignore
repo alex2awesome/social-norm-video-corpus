@@ -21,3 +21,11 @@ __pycache__/
 .ruff_cache/
 .claude/
 .DS_Store
+
+# Secrets: proxies and cookies live OUTSIDE the repo on sk3; never commit credentials
+*proxies*
+*cookies*
+config/secrets*.yaml
+*.log
+.venv/
+*.egg-info/
