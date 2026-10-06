@@ -1,0 +1,24 @@
+--- a/src/sources.py
++++ b/src/sources.py
+@@ -24,6 +24,7 @@
+ import re
+ from pathlib import Path
+ from typing import Optional
++from urllib.parse import urlparse
+ 
+ import requests
+ 
+@@ -51,6 +52,13 @@
+     pool = [] if force_direct else (
+         scrape._load_proxy_pool(cfg) if cfg.get("api", {}).get("use_proxy", True) else [])
+     attempts = max(1, cfg["network"].get("proxy_attempts", 6))
++    host = (urlparse(url).hostname or "").casefold()
++    host_limits = (cfg.get("api", {}).get("host_attempt_limits", {}) or {})
++    for configured_host, limit in host_limits.items():
++        configured_host = str(configured_host).casefold()
++        if host == configured_host or host.endswith("." + configured_host):
++            attempts = min(attempts, max(1, int(limit)))
++            break
+     tried: list[str] = []
+     for i in range(attempts if pool else 1):
+         proxies = None

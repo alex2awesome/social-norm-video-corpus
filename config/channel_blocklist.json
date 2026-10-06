@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "purpose": "Channels blocked at enumeration (before download) as pure scripted/produced-media or compilation/clickbait re-uploaders. Gate: >=2 spot-check defects, 0 genuine. Reversible: remove a line here + restore its clips from data/quarantine. Every block is logged to data/channel_block_log.jsonl.",
+    "created": "2026-06-18",
+    "source": "qa_journal.jsonl pure-bad analysis (>=2 quarantined, 0 ok) via /tmp/pure_bad.py, plus 2 directly-reviewed scripted-show channels (love buster, The Girl Named Feriha) the DB-join under-counted.",
+    "matching": "exact, case-insensitive (casefold + strip) on seen_videos.channel"
+  },
+  "channels": [
+    "Raj World",
+    "The.Bill.Tv.Series",
+    "ENTERTAINMENT TV, BL",
+    "Irenewallaceangry",
+    "Moto Madness",
+    "Automobile And Vehicle",
+    "Just Wait And Watch",
+    "drivingfails",
+    "Compilation City Videos",
+    "Classics",
+    "Oha Diyorum",
+    "Amazingly Amaze",
+    "reality tube",
+    "Video Clips",
+    "Safe Driving Academy",
+    "RR&BD Driving School",
+    "Movies Collection",
+    "Mobile Games",
+    "FUNNY MOTORCYCLE FAIL",
+    "DHAR MANN Studio",
+    "Car Crash Compilation TV",
+    "British Soaps",
+    "love buster",
+    "The Girl Named Feriha",
+    "Peppa Pig Gets Grounded",
+    "L Bergeron",
+    "Les coulisses",
+    "Jeremiahmattick49",
+    "happypranksgiving"
+  ]
+}

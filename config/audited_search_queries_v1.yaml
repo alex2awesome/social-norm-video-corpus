@@ -1,0 +1,81 @@
+version: audited_search_queries_v1
+active: true
+platform: dailymotion
+priority: 3.25
+source: manual_audit_search_v1
+policy:
+  retrieval_only: true
+  query_text_is_never_a_label: true
+  preserve_existing_queries: true
+  preserve_all_existing_videos: true
+  downstream_visual_gate_required: true
+  unsupported_shadow_queries_remain_inactive: true
+audit:
+  source: audit_runs/20260723_search_shadow_v4_video_audit/manual_review.jsonl
+  source_sha256: 3d1221d7b58073b46165a32f0e6d6fd278234f3d996e663b820603cc6cae8e02
+  selection: audit_runs/20260723_search_shadow_v4_video_audit/selection.json
+  selection_sha256: 32ab20215eaed42aba25657ce2fde0b2bbf4a806fc7b5ff2e3802ae08a6472c9
+  validation_required_before_seed: true
+  method: source_disjoint_full_video_and_dense_followup_review
+  reviewed_sources: 60
+  selected_query_reviewed_sources: 29
+  selected_query_strict_target_passes: 16
+  excluded_zero_pass_query_formulations: 5
+  excluded_witnessed_query_formulations: 8
+  witnessed_exclusion_reason: only_1_of_20_sources_passed_the_strict_pillar_contract
+queries:
+  - pillar: instructional
+    category: instr_scene_audited_v1
+    query: sexual harassment office training acted vignette
+    reviewed: 3
+    strict_target_passes: 2
+  - pillar: instructional
+    category: instr_scene_audited_v1
+    query: police de escalation scenario role play training
+    reviewed: 2
+    strict_target_passes: 1
+  - pillar: instructional
+    category: instr_scene_audited_v1
+    query: sharing taking turns animated social story
+    reviewed: 4
+    strict_target_passes: 2
+  - pillar: instructional
+    category: instr_scene_audited_v1
+    query: taking turns social skills video model
+    reviewed: 2
+    strict_target_passes: 1
+  - pillar: instructional
+    category: instr_scene_audited_v1
+    query: classroom bullying bystander role play
+    reviewed: 3
+    strict_target_passes: 2
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: dashcam compilation reaction commentary
+    reviewed: 3
+    strict_target_passes: 2
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: dangerous driving dashcam reaction commentary
+    reviewed: 3
+    strict_target_passes: 1
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: road rage dashcam breakdown reaction video
+    reviewed: 2
+    strict_target_passes: 1
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: driving mistakes dashcam commentary original footage
+    reviewed: 2
+    strict_target_passes: 1
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: surveillance footage abuse reaction commentary
+    reviewed: 3
+    strict_target_passes: 2
+  - pillar: commentary
+    category: comm_scene_audited_v1
+    query: caught on security camera commentary breakdown
+    reviewed: 2
+    strict_target_passes: 1

@@ -1,0 +1,45 @@
+{
+  "profiles": {
+    "qwen3_vl_8b_low_impact": {
+      "endpoint": "http://127.0.0.1:8271/v1",
+      "env": {
+        "CUDA_VISIBLE_DEVICES": "7",
+        "HF_HOME": "/lfs/skampere3/0/shared_hf_cache",
+        "HF_HUB_OFFLINE": "1",
+        "HOME": "/lfs/skampere3/0/alexspan",
+        "TRANSFORMERS_OFFLINE": "1",
+        "VLLM_WORKER_MULTIPROC_METHOD": "spawn",
+        "XDG_CACHE_HOME": "/lfs/skampere3/0/alexspan/.cache"
+      },
+      "gpu": 7,
+      "gpu_candidates": [0, 5, 6, 7],
+      "lock_file": "/lfs/skampere3/0/alexspan/norm-scraper/data/shadow_scores/managed_servers/qwen3_vl_8b.lock",
+      "log_file": "/lfs/skampere3/0/alexspan/norm-scraper/data/shadow_scores/managed_servers/qwen3_vl_8b.log",
+      "min_free_mib": 90000,
+      "model": "qwen3-vl-8b-instruct",
+      "server_argv": [
+        "/lfs/skampere3/0/alexspan/envs/ai_usage/bin/python",
+        "-m",
+        "vllm.entrypoints.openai.api_server",
+        "--model",
+        "Qwen/Qwen3-VL-8B-Instruct",
+        "--served-model-name",
+        "qwen3-vl-8b-instruct",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8271",
+        "--dtype",
+        "bfloat16",
+        "--max-model-len",
+        "16384",
+        "--gpu-memory-utilization",
+        "0.42",
+        "--allowed-local-media-path",
+        "/lfs/skampere3/0/alexspan/norm-scraper",
+        "--no-enable-log-requests"
+      ],
+      "state_file": "/lfs/skampere3/0/alexspan/norm-scraper/data/shadow_scores/managed_servers/qwen3_vl_8b.state.json"
+    }
+  }
+}

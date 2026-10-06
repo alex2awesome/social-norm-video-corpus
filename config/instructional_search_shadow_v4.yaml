@@ -1,0 +1,35 @@
+version: instructional_search_shadow_v4
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Source-disjoint replication of the three v3 families that produced exact
+# visual demonstrations: workplace role-play, de-escalation simulations, and
+# sharing/turn-taking stories. Bullying role-play is included as a supported
+# reroute family, but reroutes still do not count as target precision.
+groups:
+  enacted_family_replication_v4:
+    - workplace harassment employee role play training scenario
+    - sexual harassment office training acted vignette
+    - police de escalation scenario role play training
+    - mental health crisis de escalation police simulation
+    - sharing taking turns animated social story
+    - taking turns social skills video model
+    - classroom bullying bystander role play
+    - student bullying intervention training scenario
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  preserve_all_returned_candidates: true
+  exclude_v3_source_uids_from_audiovisual_sample: true
+  title_filter_is_only_for_audit_sampling: true
+  title_or_query_can_never_accept: true
+  audit_low_title_plausibility_sample_per_query: 1
+  final_gate: full_instructional_v4_video_review
+  localize_scenario_terms_before_whole_source_rejection: true
+  require_exact_demo_inside_the_accepted_clip: true
+  any_medium_allowed: true
+  record_demo_medium: true
+  reroutes_never_count_as_target_query_precision: true
+  production_eligible_without_full_rank_sample_review: false

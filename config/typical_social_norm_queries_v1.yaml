@@ -1,0 +1,336 @@
+version: 1
+source: typical_social_norm_v1
+policy:
+  purpose: retrieval_only_pending_manual_output_audit
+  ordinary_social_norms_only: true
+  police_or_law_enforcement_confrontation_allowed: false
+  automatic_acceptance: false
+  corpus_mutation_authorized: false
+
+queries:
+  - query: "roommate chore conflict role play"
+    pillar: instructional
+    category: instr_typical_home
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "roommates negotiate or violate a shared chore obligation"
+  - query: "shared kitchen cleanup roommate scenario"
+    pillar: instructional
+    category: instr_typical_home
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a resident leaves or cleans a shared kitchen"
+  - query: "asking before borrowing social story"
+    pillar: instructional
+    category: instr_typical_home
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "one person asks permission before taking another person's property"
+  - query: "returning borrowed items role play"
+    pillar: instructional
+    category: instr_typical_home
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a borrower returns or fails to return an item"
+  - query: "holding the door etiquette demonstration"
+    pillar: instructional
+    category: instr_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "a person holds or closes a door as another person approaches"
+  - query: "elevator etiquette acted scenario"
+    pillar: instructional
+    category: instr_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "people enter, exit, or share space in an elevator"
+  - query: "library quiet behavior social story"
+    pillar: instructional
+    category: instr_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a person makes or avoids disruptive noise in a library"
+  - query: "speakerphone in public etiquette skit"
+    pillar: instructional
+    category: instr_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "a public phone call disturbs nearby people"
+  - query: "letting passengers exit before boarding demonstration"
+    pillar: instructional
+    category: instr_typical_transit
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "boarding passengers wait or obstruct exiting passengers"
+  - query: "bus priority seating etiquette scenario"
+    pillar: instructional
+    category: instr_typical_transit
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a passenger offers, requests, or refuses a priority seat"
+  - query: "returning shopping carts etiquette demonstration"
+    pillar: instructional
+    category: instr_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a shopper returns or abandons a cart"
+  - query: "picking up after your dog etiquette lesson"
+    pillar: instructional
+    category: instr_typical_neighbor
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a dog owner cleans or fails to clean a shared area"
+  - query: "coworker taking credit role play training"
+    pillar: instructional
+    category: instr_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "a coworker claims another person's contribution"
+  - query: "workplace gossip role play scenario"
+    pillar: instructional
+    category: instr_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "coworkers spread or resist personal gossip"
+  - query: "meeting interruption role play workplace"
+    pillar: instructional
+    category: instr_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "one participant repeatedly interrupts another in a meeting"
+  - query: "including a new coworker lunch role play"
+    pillar: instructional
+    category: instr_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "coworkers include or exclude a newcomer from a social meal"
+  - query: "arriving late to a meeting role play"
+    pillar: instructional
+    category: instr_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "a participant arrives late and affects a group meeting"
+  - query: "dinner guest manners acted scenario"
+    pillar: instructional
+    category: instr_typical_guest
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "a guest follows or violates ordinary host-guest expectations"
+
+  - query: "line cutter confronted by another customer original video"
+    pillar: witnessed
+    category: wit_typical_queue
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "a separate customer reacts after someone cuts a queue"
+  - query: "queue jumper called out by bystander caught on camera"
+    pillar: witnessed
+    category: wit_typical_queue
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a bystander verbally objects to queue jumping"
+  - query: "customer yelling at cashier another customer intervenes video"
+    pillar: witnessed
+    category: wit_typical_service
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "another customer intervenes after mistreatment of a cashier"
+  - query: "rude diner berates server another diner intervenes"
+    pillar: witnessed
+    category: wit_typical_service
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a diner reacts to another diner's treatment of a server"
+  - query: "passenger playing loud music confronted on bus video"
+    pillar: witnessed
+    category: wit_typical_transit
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "another passenger responds to disruptive music"
+  - query: "speakerphone in quiet area confronted by stranger video"
+    pillar: witnessed
+    category: wit_typical_shared_space
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a nearby stranger reacts to a disruptive public call"
+  - query: "person littering confronted by bystander original video"
+    pillar: witnessed
+    category: wit_typical_shared_space
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "a bystander objects after seeing someone litter"
+  - query: "dog owner not picking up confronted by neighbor video"
+    pillar: witnessed
+    category: wit_typical_neighbor
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a neighbor reacts to a dog owner leaving waste"
+  - query: "shopper blocking grocery aisle asked to move video"
+    pillar: witnessed
+    category: wit_typical_shared_space
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "another shopper responds to an obstructed shared aisle"
+  - query: "passenger blocks train doors commuters react video"
+    pillar: witnessed
+    category: wit_typical_transit
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "commuters react after a passenger obstructs train doors"
+  - query: "passenger refuses priority seat bystander speaks up"
+    pillar: witnessed
+    category: wit_typical_transit
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "a bystander objects to refusal of a priority seat"
+  - query: "person takes someone else's seat argument original video"
+    pillar: witnessed
+    category: wit_typical_shared_space
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "the affected person or another witness reacts to seat taking"
+  - query: "neighbor noise complaint caught on camera"
+    pillar: witnessed
+    category: wit_typical_neighbor
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a neighbor responds to disruptive household noise"
+  - query: "customer cuts checkout line argument video"
+    pillar: witnessed
+    category: wit_typical_queue
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "customers react to someone cutting a checkout line"
+  - query: "bullying student classmate intervenes original video"
+    pillar: witnessed
+    category: wit_typical_school
+    platforms: [youtube, dailymotion, reddit]
+    canary: true
+    target: "a classmate intervenes after witnessing peer bullying"
+  - query: "coworker takes credit meeting confrontation video"
+    pillar: witnessed
+    category: wit_typical_workplace
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a colleague responds after another person claims their work"
+  - query: "person smokes in non smoking area confronted video"
+    pillar: witnessed
+    category: wit_typical_shared_space
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "a nearby person objects to smoking in a shared restricted area"
+  - query: "someone interrupts performance audience reacts video"
+    pillar: witnessed
+    category: wit_typical_audience
+    platforms: [youtube, dailymotion, reddit]
+    canary: false
+    target: "audience members react to a disruptive interruption"
+
+  - query: "line cutting incident video explained"
+    pillar: commentary
+    category: comm_typical_queue
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary identifies a bounded queue-cutting event shown on screen"
+  - query: "rude customer cashier incident video commentary"
+    pillar: commentary
+    category: comm_typical_service
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary judges a customer's treatment of a cashier with source footage"
+  - query: "restaurant customer server incident commentary"
+    pillar: commentary
+    category: comm_typical_service
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary localizes customer-server conduct in a restaurant"
+  - query: "public transport loud music incident commentary"
+    pillar: commentary
+    category: comm_typical_transit
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary judges a bounded disruptive-music event with footage"
+  - query: "priority seat dispute video commentary"
+    pillar: commentary
+    category: comm_typical_transit
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary identifies conduct in a priority-seat dispute"
+  - query: "neighbor noise dispute video commentary"
+    pillar: commentary
+    category: comm_typical_neighbor
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges a bounded neighbor-noise event"
+  - query: "littering confrontation video commentary"
+    pillar: commentary
+    category: comm_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary judges littering and the immediate response with footage"
+  - query: "dog owner cleanup dispute video commentary"
+    pillar: commentary
+    category: comm_typical_neighbor
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary identifies a dog-owner cleanup dispute"
+  - query: "shopping cart etiquette incident commentary"
+    pillar: commentary
+    category: comm_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges cart abandonment or obstruction with footage"
+  - query: "workplace meeting interruption video commentary"
+    pillar: commentary
+    category: comm_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary identifies an interruption in a bounded meeting event"
+  - query: "coworker takes credit incident commentary"
+    pillar: commentary
+    category: comm_typical_workplace
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges one coworker claiming another's contribution"
+  - query: "school bullying bystander video commentary"
+    pillar: commentary
+    category: comm_typical_school
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary binds bullying and a bystander's response to source footage"
+  - query: "passenger blocks train doors incident commentary"
+    pillar: commentary
+    category: comm_typical_transit
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges a passenger obstructing shared transit"
+  - query: "speakerphone public argument video commentary"
+    pillar: commentary
+    category: comm_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary identifies a bounded public-phone dispute"
+  - query: "restaurant tipping dispute video commentary"
+    pillar: commentary
+    category: comm_typical_service
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges conduct in a specific tipping dispute"
+  - query: "roommate chore conflict video commentary"
+    pillar: commentary
+    category: comm_typical_home
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary judges a bounded shared-chore conflict"
+  - query: "elevator etiquette incident video commentary"
+    pillar: commentary
+    category: comm_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: false
+    target: "commentary identifies conduct in a specific elevator interaction"
+  - query: "personal space incident video commentary"
+    pillar: commentary
+    category: comm_typical_shared_space
+    platforms: [youtube, dailymotion]
+    canary: true
+    target: "commentary judges a bounded invasion of personal space with footage"

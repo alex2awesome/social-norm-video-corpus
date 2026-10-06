@@ -1,0 +1,23 @@
+# Core scraping / media
+yt-dlp>=2024.11.4
+
+# Transcription (WhisperX gives word-level timestamps + alignment + diarization)
+# NOTE: on Blackwell (B200 / sm_100) torch must be a cu128 build. Install torch
+# SEPARATELY first (see README) so pip does not pull a CPU/old-CUDA wheel:
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu128
+whisperx>=3.1.1
+
+# Source adapters (Reddit via Arctic Shift API, Dailymotion + Odysee APIs)
+requests>=2.31         # already pulled in by whisperx, pinned here for clarity
+
+# Batch detection (offline LLM verdicts) — GPU-only stage, run on sk3.
+# Pin a build matching the installed cu128 torch; install on the GPU box, not laptops.
+vllm>=0.6.3            # src/batch_detect.py, src/audio_recover.py (offline LLM judge)
+
+# Audio-event weak labels (PANNs / AudioSet CNN) — GPU stage, run on sk3.
+panns_inference>=0.1.1 # src/audio_events.py (reaction/commotion reranking + recovery)
+
+# Config / data / misc
+pyyaml>=6.0
+ffmpeg-python>=0.2.0   # convenience only; we mostly call ffmpeg via subprocess
+tqdm>=4.66

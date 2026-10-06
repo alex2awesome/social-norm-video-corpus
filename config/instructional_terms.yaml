@@ -1,0 +1,113 @@
+# Instructional / demonstrated-norm video vein -> SEPARATE corpus (data/instructional/).
+#
+# These find DIDACTIC videos that TEACH a social norm: a role-play DEMO enacts a
+# violation/situation and an educator EXPLAINS the norm (the explanation = free
+# ground-truth annotation). This is NOT the candid violation+reaction genre.
+#
+# state.seed_instructional() seeds terms on youtube (Data API) + dailymotion,
+# tagged category="instr_<key>". process_video routes any instr_* video to the
+# InstructionalDetector and, if confirmed instructional, to data/instructional/
+# (structured extraction + demo clips) -- separate from the witnessed/commentary
+# corpora. NB: instructional VIDEOS live on YouTube/Vimeo/TPT; the subreddits
+# below mostly *discuss* them (text) so they're low video-yield -- seeded thin.
+
+categories:
+  instr_autism_sel:
+    label: "Autism / SEL social-skills teaching (demo + narrated 'why')"
+    terms:
+      - "social story taking turns"
+      - "social story sharing"
+      - "social story personal space"
+      - "social story waiting your turn"
+      - "social story raising your hand"
+      - "social story keeping hands to yourself"
+      - "social story interrupting"
+      - "social story going to the playground"
+      - "social story losing a game"
+      - "expected vs unexpected behavior"
+      - "expected and unexpected behavior examples"
+      - "whole body listening video"
+      - "size of the problem social thinking"
+      - "social skills role play interrupting"
+      - "social skills role play sharing"
+      - "social skills role play apologizing"
+      - "video modeling greeting someone"
+      - "video modeling joining a group autism"
+      - "video modeling asking for help autism"
+      - "video modeling waiting in line"
+      - "video modeling making a friend"
+      - "social skills how to start a conversation"
+      - "social skills personal space too close"
+      - "social skills handling teasing"
+      - "social skills perspective taking lesson"
+      - "autism social skills lesson personal space"
+      - "Everyday Speech social skills video"
+      - "Model Me Kids social skills"
+      - "Howard B Wigglebottom listening"
+
+  instr_automobile:
+    label: "Driving / automobile social-norm teaching (etiquette, road rage, AV)"
+    terms:
+      - "driving etiquette training video"
+      - "road rage de-escalation training"
+      - "how to handle road rage defensive driving"
+      - "defensive driving courtesy lesson"
+      - "new driver road etiquette tutorial"
+      - "merging etiquette driving lesson"
+      - "four way stop etiquette explained"
+      - "roundabout etiquette tutorial"
+      - "drivers ed road rage scenario"
+      - "teaching teen driver road manners"
+      - "autism learning to drive social skills"
+      - "how to share the road cyclists drivers"
+      - "parking lot etiquette explained"
+      - "what to do when confronted road rage"
+      - "passenger etiquette rideshare lesson"
+
+  instr_corporate:
+    label: "Corporate / workplace norm training (role-play + trainer debrief)"
+    terms:
+      - "sexual harassment training role play scenario"
+      - "workplace harassment what would you do training"
+      - "quid pro quo harassment training example"
+      - "hostile work environment training video"
+      - "respectful workplace training demonstration"
+      - "bystander intervention workplace scenario"
+      - "bystander intervention 5 Ds training"
+      - "diversity training role play microaggression"
+      - "unconscious bias training scenario"
+      - "microaggression training video"
+      - "DEI training role play example"
+      - "conflict resolution training role play office"
+      - "customer de-escalation training scenario"
+      - "workplace etiquette training video"
+      - "is this harassment training vignette"
+      - "1990s sexual harassment training video"
+      - "manager harassment prevention training scenario"
+      - "respect in the workplace training video"
+      - "anti bullying workplace training role play"
+      - "workplace boundaries training role play"
+      - "retaliation workplace training scenario"
+
+# Discussion communities. AUTISM subs especially are a goldmine of EXPLICIT social-
+# norm DESCRIPTION (autistic users spell norms out because they aren't implicit) ->
+# best mined as TEXT (post title+selftext via Arctic Shift -> LLM norm extraction ->
+# normative-text corpus), NOT video (low v.redd.it yield). Flagged text_mine: true.
+subreddits:
+  instr_autism_sel: [slp, specialed, ABA, AutismParenting]
+  instr_corporate:  [humanresources, instructionaldesign]
+
+# Autism/SEL communities to TEXT-MINE for explicit norm statements (separate path,
+# no video download -- pull selftext, LLM-extract norms). Not yet wired (next build).
+text_mine_subreddits:
+  - autism
+  - AutisticAdults
+  - aspergers
+  - AutismInWomen
+  - autism_parenting
+  - spicyautism
+  - AutisticPride
+  - socialskills
+
+# Platforms to seed instructional terms on (instructional video lives here).
+platforms: [youtube, dailymotion]

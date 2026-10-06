@@ -1,0 +1,33 @@
+version: instructional_search_shadow_v3
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Third read-only search iteration. V1 produced promising but unstable target
+# matches; source-disjoint v2 collapsed to duplicate episodes and off-target
+# reroutes. These queries retain one concrete behavior/context noun and one
+# audiovisual depiction noun. Neither query nor title supplies a label.
+groups:
+  behavior_plus_depiction_v3:
+    - workplace harassment training vignette
+    - customer de escalation acted training scenario
+    - autism video modeling personal space
+    - social skills video modeling taking turns
+    - consent communication training vignette
+    - bystander intervention training vignette
+    - classroom conflict students acted scenario
+    - disability etiquette acted scenario
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  preserve_all_returned_candidates: true
+  title_filter_is_only_for_audit_sampling: true
+  title_or_query_can_never_accept: true
+  sample_top_unseen_episode_disjoint_nonjunk_per_query: 2
+  require_behavior_noun_retention_for_high_rank_sampling: true
+  final_gate: full_instructional_v4_video_review
+  require_exact_demo_inside_the_accepted_clip: true
+  any_medium_allowed: true
+  reroutes_never_count_as_target_query_precision: true
+  production_eligible_without_full_rank_sample_review: false

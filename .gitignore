@@ -1,0 +1,23 @@
+# Media, audit artifacts and caches stay on the cluster; only code, configs, docs and tests are in git.
+data/
+audit_runs/
+spotcheck/
+paircheck/
+paircheck_v2/
+sample_clips/
+model_cache/
+logs/
+*.mp4
+*.webm
+*.mkv
+*.wav
+*.mp3
+*.db
+*.sqlite
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.claude/
+.DS_Store

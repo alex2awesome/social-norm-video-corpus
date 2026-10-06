@@ -1,0 +1,68 @@
+version: witnessed_target_response_search_shadow_v1
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Read-only test of a potential expansion from bystander reactions to direct,
+# explicit target objections. Query text is retrieval-only and never labels a
+# result. The current witnessed policy remains unchanged.
+groups:
+  explicit_target_objection_v1:
+    - street harassment prank woman says no
+    - sexual proposition prank woman refuses
+    - creepy pickup line social experiment woman confronts
+    - man harasses woman public prank she objects
+    - unwanted touching prank woman reacts
+    - catcalling social experiment woman confronts
+    - public harassment social experiment victim says stop
+    - non consensual filming prank woman objects
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  exclude_already_seen: true
+  exclude_every_uid_in_prior_shadow_enumerations:
+    - audit_runs/witnessed_search_shadow_v1_0721/enumeration.json
+    - audit_runs/witnessed_search_shadow_v2_0721/enumeration.json
+    - audit_runs/instructional_search_shadow_v1_0721/enumeration.json
+    - audit_runs/instructional_search_shadow_v2_0721/enumeration.json
+  preserve_all_returned_candidates: true
+  title_filter_is_only_for_audit_sampling: true
+  sample_top_unseen_episode_disjoint_nonjunk_per_query: 2
+  title_or_query_can_never_accept: true
+  target_objection_must_be_explicit_and_causally_about_the_action: true
+  training_action_must_end_before_first_objection_or_refusal: true
+  objection_evidence_is_private_and_never_training_media: true
+  require_exact_hash_verified_action_and_evidence_artifacts: true
+  require_episode_duplicate_candidate_scan_and_manual_review: true
+  final_gate: full_audiovisual_source_review_and_exact_splice_audit
+  production_eligible_without_full_rank_sample_review: false
+
+audit_result:
+  completed_at: "2026-07-21T11:04:00-07:00"
+  audit_model: codex-manual-multiframe-transcript-exact-artifact-review
+  intended_gpt_5_6_sol_executed: false
+  enumerated_titles_reviewed: 160
+  selected_sources: 16
+  rendered_sources_reviewed: 15
+  download_failed_fail_closed: 1
+  dense_review: {sources: 8, frames: 672, successful_transcripts: 7, no_audio_fail_closed: 1}
+  exact_artifacts:
+    v1: {reviewed: 12, frames: 169, pass: 10, reject_and_repair: 2}
+    v2_repairs: {reviewed: 2, frames: 17, pass: 2}
+  source_decisions:
+    independent_direct_target_response_accept: 0
+    existing_bystander_witnessed_accept: 1
+    instructional_reroute_sources: 5
+    reject_including_download_failure: 10
+  instructional_reroute_demos: {clean: 4, externally_narrated_labeled: 3, total: 7}
+  episode_duplicate_scan: {rendered_sources: 77, pairs: 2926, candidates: 4, new_target_response_pairs: 0, all_candidates_dispositioned: true}
+  status: failed_zero_independent_direct_target_response_accepts_do_not_promote
+  supported_existing_witnessed_example:
+    uid: dailymotion__x7srler
+    action_interval_seconds: [0.0, 15.95]
+    first_objection_second: 16.19
+    action_sha256: 3440ff599a7aacddca1dea50e376fb8e9b8953f4e10ced248d0055b9b2f863dc
+    evidence_sha256: ccf6244e43816b222b92082b7652d9b0df6b72dba48305a22111980e19f8c5a2
+  production_eligible: false
+  corpus_mutated: false

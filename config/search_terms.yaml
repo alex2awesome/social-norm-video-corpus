@@ -1,0 +1,139 @@
+# Seed targets per platform. The loop seeds its queue from the `sources` block
+# below (see state.seed_from_config); the query generator expands the free-text
+# platforms (youtube/dailymotion/odysee) at runtime. Reddit targets are fixed
+# subreddit names.
+#
+# Measured 2026-06-01: YouTube bot-walls datacenter proxies, so it ships
+# DISABLED. Reddit (Arctic Shift API) + Dailymotion + Odysee all work direct.
+
+# Reusable free-text query list (YAML anchor).
+# These were validated against the Dailymotion Data API (2026-06-01): each
+# returns ~20/20 on-topic results. Generic/scripted phrasings like "social
+# experiment rude" were dropped -- they surfaced music videos and devotional
+# clips, not bystander-reaction footage.
+text_queries: &text_queries
+  - "public freakout"
+  - "public freakout compilation"
+  - "karen freakout"
+  - "karen compilation"
+  - "entitled karen"
+  - "entitled people meltdown"
+  - "road rage caught on camera"
+  - "angry customer freakout"
+  - "customer vs employee freakout"
+  - "racist rant caught on camera"
+  - "public meltdown"
+  - "caught on camera argument"
+  - "neighbor dispute caught on camera"
+  - "karen vs employee"
+  - "entitled parent freakout"
+  - "rude customer caught on camera"
+  # --- "quiet end": subtle / everyday norm violations + bystander reactions ---
+  # (validated on the Dailymotion API 2026-06-02; ~14-15/15 on-topic each).
+  # "What Would You Do?"-style staged scenarios are the closest analog to
+  # EgoNormia's subtle, grounded norms — bystander reactions to mild violations.
+  - "what would you do social experiment"
+  - "what would you do bystander"
+  - "line cutting social experiment"
+  - "cutting in line reaction"
+  - "talking loudly on phone in public"
+  - "inconsiderate people compilation"
+  - "public transport etiquette"
+  - "talking in movie theater"
+  - "entitled person cuts in line"
+  - "loud talker in public"
+  # --- "everyday callout" band: mild, organic norm violations (validated
+  # 2026-06-02; these survive the staged-prank judge, unlike WWYD content).
+  # NB: the truly-subtle end (proxemics, quiet politeness) is not scrapable as
+  # viral video; this is the realistic quieter-than-public-freakout band.
+  - "caught littering"
+  - "guy confronts litterer"
+  - "parking dispute caught"
+  - "neighbor parking feud"
+  - "neighbor dispute caught on camera"
+  - "dog owner confronted poop"
+  - "parking spot argument"
+
+sources:
+  youtube:
+    enabled: true             # CAUTIOUS TRIAL (2026-06-03): direct from sk3, low scheduler weight +
+                              # rate-limited, small query set, watch for "Sign in to confirm you're
+                              # not a bot". Abort (enabled:false) if it bot-walls / throttles sk3's IP.
+    queries:
+      - "public freakout"
+      - "karen freakout caught on camera"
+      - "what would you do social experiment"
+      # --- automobile / AV push (YouTube is the richest source for this) ---
+      - "waymo blocks traffic"
+      - "waymo stuck in intersection"
+      - "people react to self driving car"
+      - "guy blocks waymo"
+      - "waymo gets coned"
+      - "cruise robotaxi blocks road"
+      - "driverless car caught on camera"
+      - "self driving car fail reaction"
+      - "robotaxi malfunction"
+      - "road rage caught on camera"
+      - "road rage confrontation"
+      - "dashcam road rage"
+      - "angry driver confrontation"
+      - "parking dispute caught on camera"
+      - "tailgating road rage"
+      - "brake check road rage"
+
+  dailymotion:
+    enabled: true
+    queries: *text_queries
+
+  rumble:
+    enabled: true             # no-auth HTML search + yt-dlp; highest genre density
+    queries: *text_queries
+
+  odysee:
+    enabled: false            # Lighthouse search returns 0 usable results for our
+                              # genre -> never enumerated a single video. Disabled.
+    queries: *text_queries
+
+  reddit:
+    enabled: true
+    # Curated subreddits with the highest density of audible bystander reactions
+    # to norm violations. Enumerated via the Arctic Shift API (no auth).
+    subreddits:
+      - PublicFreakout
+      - ActualPublicFreakouts
+      - IdiotsInCars
+      - instantkarma
+      - JusticeServed
+      - Whatcouldgowrong
+      - FuckYouKaren
+      - Karens
+      - CrazyKarens
+      - EntitledPeople
+      - trashy
+      - iamatotalpieceofshit
+      - byebyejob
+      - facepalm
+      - Roadcam
+      # quieter / everyday-violation video veins (driving = milder norm
+      # violations with real reactions; verified video-bearing 2026-06-02).
+      # NB: the "quietly rude" text subs (r/mildlyinfuriating, r/EntitledPeople,
+      # r/ChoosingBeggars) carry NO video, so they are unusable here.
+      - IdiotsInCars
+      - AssholesInPublic
+      # autonomous-vehicle / Waymo reactions (added 2026-06-03)
+      - waymo
+      - SelfDrivingCars
+      - Waymo_Robotaxi
+      # automobile push (2026-06-03): road-rage + AV + dashcam veins
+      - roadrage
+      - Cruise
+      - TeslaFSD
+      - Dashcam
+      - CarCrash
+
+# Combinatorial vocabulary used by query_generator.py for the explore phase:
+#   {adjective} x {context} x {format}
+generator_vocab:
+  adjective: [rude, entitled, awkward, cringe, disrespectful, obnoxious]
+  context: [restaurant, subway, wedding, "family dinner", store, airplane, gym, "movie theater", checkout line]
+  format: ["caught on camera", "social experiment", "compilation", "reaction", "gone wrong", "called out"]

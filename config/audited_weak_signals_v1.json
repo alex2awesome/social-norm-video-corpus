@@ -1,0 +1,902 @@
+{
+  "acceptance_gate_rules": 0,
+  "policy": {
+    "all_existing_media_preserved": true,
+    "query_or_title_is_never_a_label": true,
+    "unreviewed_or_failed_signals_abstain": true
+  },
+  "rules": [
+    {
+      "allowed_uses": ["candidate_generation"],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260723_search_shadow_v4_video_audit/manual_review.jsonl",
+        "artifact_sha256": "3d1221d7b58073b46165a32f0e6d6fd278234f3d996e663b820603cc6cae8e02",
+        "manual_review_complete": true,
+        "reviewed": 60,
+        "source_disjoint": true
+      }],
+      "pillar": "all",
+      "review_routes": ["download_candidate"],
+      "rule_id": "audited_scene_queries_v1",
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "retrieval_only",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": ["candidate_generation", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260729_witnessed_reaction_feature_cycles_v1/source_disjoint_24_v2_candidate_scan.json",
+        "artifact_sha256": "37b9e3202264e06c800ac9d795f3015ddb5729bd0985fe1a0befc8bff8975142",
+        "fn": 0,
+        "fp": 12,
+        "manual_review_complete": true,
+        "precision": 0.3333333333333333,
+        "recall": 1.0,
+        "reviewed": 24,
+        "selected": 18,
+        "source_disjoint": true,
+        "tp": 6
+      }],
+      "pillar": "witnessed",
+      "review_routes": ["reaction_localization_review"],
+      "rule_id": "witnessed_clipwide_intervention_scan_v1",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 0.3333333333333333,
+        "audited_recall": 1.0,
+        "evidence_basis": "20260729 source-disjoint 24-source clip-wide scan audit (tp=6 fp=12 fn=0); high-recall low-precision vote for the generative label model only",
+        "evidence_family": "reaction",
+        "shadow_only": true,
+        "target": "reaction_grounded",
+        "vote_when_triggered": 1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "high_recall_reaction_window_proposal",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": ["strict_route_exclusion", "pillar_reroute", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260727_witnessed_authority_cue_audit_v2/evaluation_v3_current.json",
+          "artifact_sha256": "47cb4e1ab5c315d72617c99471d80a7609bd24c5cf72eed587071bb4faa5f283",
+          "fn": 6,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 0.6,
+          "reviewed": 48,
+          "selected": 9,
+          "source_disjoint": true,
+          "tp": 9
+        },
+        {
+          "artifact": "audit_runs/20260727_witnessed_authority_cue_confirmation_v3/evaluation.json",
+          "artifact_sha256": "055f3c1f47c92e79c8c69175890f5654fbb305997b09f537b7372db34ffe2563",
+          "fn": 0,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "reviewed": 48,
+          "selected": 24,
+          "source_disjoint": true,
+          "tp": 24
+        }
+      ],
+      "pillar": "witnessed",
+      "review_routes": ["visible_scene_review"],
+      "rule_id": "witnessed_authority_exact_span_v3",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 1.0,
+        "audited_recall": 0.8461538461538461,
+        "evidence_basis": "20260727 authority-cue audits v2 discovery + v3 confirmation pooled (tp=33 fp=0 fn=6); negative vote on the strict organic bystander subtype only, never against the broad norm-event target",
+        "evidence_family": "actor_role_binding",
+        "shadow_only": true,
+        "target": "independent_bystander_signal",
+        "vote_when_triggered": -1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": ["strict_organic_witnessed"],
+      "target": "authority_or_host_reaction_not_bystander",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260806_witnessed_av_scale_transfer_v1/transfer_gate_summary.json",
+          "artifact_sha256": "be909c40227767ffe5aeb96174f4c2a35df5a6b60f17beec568d80e2bf19b37b",
+          "fn": 1,
+          "fp": 2,
+          "manual_review_complete": true,
+          "precision": 0.7142857142857143,
+          "recall": 0.8333333333333334,
+          "reviewed": 24,
+          "selected": 7,
+          "source_disjoint": true,
+          "tp": 5
+        },
+        {
+          "artifact": "audit_runs/20260806_witnessed_video_asr_corpus_intensive_v1/selection_v1/evaluation.json",
+          "artifact_sha256": "8495d99860cd5cdb647498fa984a6ed3a434086e1715a5018b9b54e08d2a8d55",
+          "cohort": "uniform_probability_sample",
+          "fn": 2,
+          "fp": 6,
+          "manual_review_complete": true,
+          "precision": 0.14285714285714285,
+          "recall": 0.3333333333333333,
+          "reviewed": 60,
+          "selected": 7,
+          "source_disjoint": true,
+          "tp": 1
+        },
+        {
+          "artifact": "audit_runs/20260806_witnessed_video_asr_corpus_intensive_v1/selection_v1/reaction_routing_composition_v2.json",
+          "artifact_sha256": "432aba3ddfc573ab37211db635a81b8b755e386a859549400dafdafa2f203e51",
+          "cohort": "uniform_probability_sample",
+          "fn": 3,
+          "fp": 7,
+          "manual_review_complete": true,
+          "precision": 0.36363636363636365,
+          "recall": 0.5714285714285714,
+          "reviewed": 60,
+          "selected": 11,
+          "source_disjoint": true,
+          "staging_independent_reaction_target": true,
+          "tp": 4
+        }
+      ],
+      "pillar": "witnessed",
+      "review_routes": [],
+      "rule_id": "witnessed_qwen_video_asr_reaction_retrieval_v3",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "strict_bystander_reaction_retrieval_staging_independent_failed_unbiased_60_source_corpus_transfer",
+      "known_limitation": "The earlier enriched 24-source result did not transfer to an unbiased one-source-one-clip corpus sample. The original V1 headline also conflated reaction retrieval with organic-source staging; the additive V2 evaluation separates them and still fails.",
+      "known_limitation_artifact": "audit_runs/20260806_witnessed_av_scale_transfer_v1/representation_prompt_comparison.json",
+      "known_limitation_artifact_sha256": "531b90997912b72019c6b11d0d77e6b4bcd7f99c2d483e86c533559b580c76f0",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": ["strict_route_exclusion", "pillar_reroute", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260724_witnessed_staging_audit_v1/evaluation.json",
+          "artifact_sha256": "d31c9231140a4733061defebc674c1ca41084e84fa5ecd74b5c32e56958b0394",
+          "fn": 11,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 0.7441860465116279,
+          "reviewed": 48,
+          "selected": 32,
+          "source_disjoint": true,
+          "tp": 32
+        },
+        {
+          "artifact": "audit_runs/20260724_witnessed_implicit_staging_audit_v2/evaluation_refined.json",
+          "artifact_sha256": "bb76c9c816bddf9e148bfa3b14ce13120a4a386ff5f1fcc516c585b91d404aef",
+          "fn": 0,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "reviewed": 39,
+          "selected": 38,
+          "source_disjoint": true,
+          "tp": 38
+        }
+      ],
+      "pillar": "witnessed",
+      "review_routes": ["instructional_demo_review"],
+      "rule_id": "witnessed_creator_staging_title_v2",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 1.0,
+        "audited_recall": 0.8641975308641975,
+        "evidence_basis": "two source-disjoint staging-title audits pooled (tp=70 fp=0 fn=11); negative vote on the strict organic bystander subtype only; staged scenes remain instructional-review candidates",
+        "evidence_family": "source_format_provenance",
+        "shadow_only": true,
+        "target": "independent_bystander_signal",
+        "vote_when_triggered": -1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": ["strict_organic_witnessed"],
+      "target": "deliberately_produced_setup",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": ["strict_route_exclusion", "pillar_reroute", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_witnessed_wwyd_candidate_confirmation_v1/evaluation.json",
+        "artifact_sha256": "42cbc525f562a84a9b8c21f9cce1aa981ae806cd87958c1fc93f78e6260bc48b",
+        "fn": 6,
+        "fp": 0,
+        "manual_review_complete": true,
+        "precision": 1.0,
+        "recall": 0.8571428571428571,
+        "reviewed": 44,
+        "selected": 36,
+        "source_disjoint": true,
+        "tp": 36
+      }],
+      "pillar": "witnessed",
+      "review_routes": ["instructional_demo_review"],
+      "rule_id": "witnessed_official_wwyd_channel_v1",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 1.0,
+        "audited_recall": 0.8571428571428571,
+        "evidence_basis": "source-disjoint official-WWYD channel audit (tp=36 fp=0 fn=6); negative vote on the strict organic bystander subtype only; sources stay instructional-review candidates",
+        "evidence_family": "source_format_provenance",
+        "shadow_only": true,
+        "target": "independent_bystander_signal",
+        "vote_when_triggered": -1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": ["strict_organic_witnessed"],
+      "target": "official_deliberately_produced_social_scenario_source_never_automatic_demo_acceptance",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260729_witnessed_reaction_feature_cycles_v1/source_disjoint_24_v1.json",
+        "artifact_sha256": "2a94da9f96ea94665fb1d749fb04b6a5cff3626fee5de2af0bf7454afc94132d",
+        "manual_review_complete": true,
+        "reviewed": 24,
+        "source_disjoint": true
+      }],
+      "pillar": "witnessed",
+      "review_routes": [],
+      "rule_id": "witnessed_identity_multimodal_ensemble_v4",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "strict_bystander_reaction",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260729_instructional_v20_rank_holdout_v1/evaluation_summary.json",
+          "artifact_sha256": "aa2e80aeeecfc7faec9b66be647e843fcc059c99e253786eb8248301d69968bb",
+          "manual_review_complete": true,
+          "reviewed": 60,
+          "source_disjoint": true
+        },
+        {
+          "artifact": "audit_runs/20260805_full_signal_expansion_audit_v1/instructional_v20_sample_v2/manual_summary.json",
+          "artifact_sha256": "6e25fbaa3703cdb296e0a4e6b8fecd9864566807b75345da1dff5cdb8121eaaf",
+          "high_visual_demo_ratio": 0.2,
+          "low_visual_demo_ratio": 0.2,
+          "manual_review_complete": true,
+          "reviewed": 30,
+          "source_disjoint": true
+        }
+      ],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_v20_multimodal_rank_high",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "visual_demo_enrichment_failed_fresh_expansion_transfer",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260805_instructional_v22_fresh_holdout_v1/qwen_gemma_v23_consensus_summary.json",
+          "artifact_sha256": "8a07f28e655fd838c57917f517ff06981991b6c969dc21101599204f27223b98",
+          "fn": 6,
+          "fp": 1,
+          "manual_review_complete": true,
+          "precision": 0.8,
+          "recall": 0.4,
+          "reviewed": 36,
+          "selected": 5,
+          "source_disjoint": true,
+          "tp": 4
+        },
+        {
+          "artifact": "audit_runs/20260806_instructional_v23_replication_100/maintenance_gate_result.json",
+          "artifact_sha256": "a5eec45b794ab9160c87e0e7685ad31df04783fbad7a2547c6b2d78b9f585a16",
+          "fn": 10,
+          "fp": 8,
+          "manual_model_outputs_reviewed": 400,
+          "manual_review_complete": true,
+          "precision": 0.42857142857142855,
+          "precision_wilson_95": [0.21380798904474121, 0.6740935542034926],
+          "recall": 0.375,
+          "recall_wilson_95": [0.18481232558863633, 0.6135895945449727],
+          "reviewed": 100,
+          "selected": 14,
+          "source_disjoint": true,
+          "tp": 6
+        }
+      ],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_v23_qwen_gemma_consensus",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "complete_label_aligned_demonstration_failed_100_source_replication",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": ["candidate_generation"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260805_instructional_title_cues_v1/summary.json",
+          "artifact_sha256": "d4b8ebdaa72588ae1bd4fd1345e024ac3535113d0a6589a597a0954e6b5de51b",
+          "fn": 66,
+          "fp": 6,
+          "manual_review_complete": true,
+          "precision": 0.8333333333333334,
+          "recall": 0.3125,
+          "reviewed": 185,
+          "selected": 36,
+          "source_disjoint": true,
+          "tp": 30
+        },
+        {
+          "artifact": "audit_runs/20260806_instructional_metadata_cues_v1/replication_summary.json",
+          "artifact_sha256": "cda53c2350f3629e691f7328b756e9933bbab7cdb8cd57ffa76aaed05994ca80",
+          "cohort": "development_100",
+          "fn": 12,
+          "fp": 4,
+          "manual_review_complete": true,
+          "precision": 0.6923076923076923,
+          "recall": 0.42857142857142855,
+          "reviewed": 100,
+          "selected": 13,
+          "source_disjoint": true,
+          "tp": 9
+        },
+        {
+          "artifact": "audit_runs/20260806_instructional_metadata_cues_v1/replication_summary.json",
+          "artifact_sha256": "cda53c2350f3629e691f7328b756e9933bbab7cdb8cd57ffa76aaed05994ca80",
+          "cohort": "evaluation_60",
+          "fn": 14,
+          "fp": 3,
+          "manual_review_complete": true,
+          "precision": 0.25,
+          "recall": 0.06666666666666667,
+          "reviewed": 60,
+          "selected": 4,
+          "source_disjoint": true,
+          "tp": 1
+        }
+      ],
+      "pillar": "instructional",
+      "review_routes": ["instructional_demo_manual_review"],
+      "rule_id": "instructional_scene_title_cues_v1",
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "broad_scene_oriented_candidate_generation_only_distribution_unstable_never_demo_label",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": ["candidate_generation", "review_ranking", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260728_commentary_title_population_dense_v1/manual_source_summary.json",
+          "artifact_sha256": "54213b62c6b92ea120bb6f90c37aa1434c0b9e56b5a8033d53d53cdd21c921f7",
+          "manual_review_complete": true,
+          "reviewed": 154,
+          "source_disjoint": true
+        },
+        {
+          "artifact": "audit_runs/20260805_full_signal_expansion_audit_v1/commentary_sample_v2/manual_summary.json",
+          "artifact_sha256": "f292a3bbe1c43f43481b66c576f92c5adbe441186089e4437dbf8850fb7e326f",
+          "manual_review_complete": true,
+          "reviewed": 24,
+          "source_disjoint": true,
+          "source_event_yes_ratio_known": 0.782608695652174,
+          "title_action_yes_ratio_known": 0.6956521739130435
+        }
+      ],
+      "pillar": "commentary",
+      "priority_tier": "localization_review",
+      "review_routes": ["commentary_visual_localization_review"],
+      "rule_id": "commentary_capture_title_event_v1",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 0.6038961038961039,
+        "audited_recall": null,
+        "evidence_basis": "exhaustive manual capture-title population audit: 93/154 cue-selected sources contained usable event footage; population recall unknown so recorded null",
+        "evidence_family": "retrieval_lineage",
+        "shadow_only": true,
+        "target": "event_present_in_source",
+        "vote_when_triggered": 1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "source_contains_title_labeled_visual_event",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": ["review_ranking", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260728_commentary_title_population_dense_v1/open_vlm_full_manual_evaluation.json",
+          "artifact_sha256": "0f8bc4f3e2addf845bdda296eba433bef448c045d4b44c250de8b097a2e0fc0d",
+          "fn": 51,
+          "fp": 4,
+          "manual_review_complete": true,
+          "precision": 0.9130434782608695,
+          "recall": 0.45161290322580644,
+          "reviewed": 154,
+          "selected": 46,
+          "source_disjoint": true,
+          "tp": 42
+        },
+        {
+          "artifact": "audit_runs/20260806_commentary_dual_retrieval_transfer_v1/evaluation.json",
+          "artifact_sha256": "34db97a259e5bee705ff28224bfae5eba6aa2c7d6d0c19a7cdcb7fa11d5185e2",
+          "fn": 11,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 0.3888888888888889,
+          "reviewed": 23,
+          "selected": 7,
+          "source_disjoint": true,
+          "tp": 7
+        }
+      ],
+      "pillar": "commentary",
+      "priority_tier": "high_review",
+      "review_routes": ["commentary_visual_localization_review"],
+      "rule_id": "commentary_dual_vlm_retrieval_core_v1",
+      "shadow_lf_vote_contract": {
+        "audited_precision": 1.0,
+        "audited_recall": 0.3888888888888889,
+        "evidence_basis": "source-disjoint transfer: 7/7 dual-VLM-selected sources manually usable, 11/18 usable sources missed; votes only where dual-VLM scores exist, abstains elsewhere",
+        "evidence_family": "semantic_model_judgment",
+        "shadow_only": true,
+        "target": "event_present_in_source",
+        "vote_when_triggered": 1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "usable_source_ranking_not_exact_clip_acceptance",
+      "trigger_values": [true]
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_title_v23_union_v1/fresh_holdout_100/validation_gate_decision.json",
+        "artifact_sha256": "f645419d18ce9a60a68f44bb7d2787c8b5863a4ae2dc09508e585df7c4e49a54",
+        "fn": 8,
+        "fp": 8,
+        "manual_review_complete": true,
+        "precision": 0.6666666666666666,
+        "recall": 0.6666666666666666,
+        "reviewed": 100,
+        "selected": 24,
+        "source_disjoint": true,
+        "tp": 16
+      }],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_title_or_v23_union_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "complete_label_aligned_demonstration_failed_intensive_transfer_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_blind_episode_relaxed_transfer_v1/fresh_holdout_100/transfer_gate_result.json",
+        "artifact_sha256": "deee35637e6d09c37a422f6b6949c0f62ff9336945cf4d8bd65dea1f10c994bf",
+        "fn": 10,
+        "fp": 2,
+        "manual_model_outputs_reviewed": 200,
+        "manual_review_complete": true,
+        "precision": 0.8666666666666667,
+        "precision_wilson_95": [0.6211801716767764, 0.9626387408969346],
+        "recall": 0.5652173913043478,
+        "recall_wilson_95": [0.3681137508501646, 0.743653646743258],
+        "reviewed": 100,
+        "selected": 15,
+        "source_disjoint": true,
+        "tp": 13
+      }, {
+        "artifact": "audit_runs/20260806_instructional_blind_episode_relaxed_transfer_v1/full_population_1431/scale_manual_spot_summary.json",
+        "artifact_sha256": "f1ac43e4ed27e85f1fa0bba712342d3213ce5c07ad5b82541ef95820a164dadc",
+        "false_negative_in_noncandidate_sample": 3,
+        "candidate_false_positive": 6,
+        "manual_review_complete": true,
+        "candidate_precision": 0.7,
+        "candidate_precision_wilson_95": [0.4810271816464765, 0.8545227551323956],
+        "reviewed": 30,
+        "sample_design": "20_candidates_plus_10_noncandidates_deterministic_stratified_spot_audit",
+        "selected_sample_reviewed": 20,
+        "source_disjoint": true,
+        "source_population_rows": 1431,
+        "candidate_true_positive": 14
+      }],
+      "pillar": "instructional",
+      "priority_tier": "visual_demo_review",
+      "review_routes": [],
+      "rule_id": "instructional_qwen_blind_episode_relaxed_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "connected_visual_demonstration_in_any_valid_medium_not_label_correctness",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_demo_consensus_v2_fresh_transfer/transfer_summary.json",
+        "artifact_sha256": "462f4decdd394eb9599f3545d8a3d910c2f59125ec3f0ccd362dcf06164363a5",
+        "fn": 12,
+        "fp": 2,
+        "manual_model_outputs_reviewed": 200,
+        "manual_review_complete": true,
+        "precision": 0.8181818181818182,
+        "precision_wilson_95": [0.523019438039156, 0.9486323102539149],
+        "recall": 0.42857142857142855,
+        "recall_wilson_95": [0.2446996892537596, 0.6345344563069328],
+        "reviewed": 100,
+        "selected": 11,
+        "source_disjoint": true,
+        "tp": 9
+      }],
+      "pillar": "instructional",
+      "priority_tier": "visual_demo_review",
+      "review_routes": [],
+      "rule_id": "instructional_qwen_demo_consensus_v2",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "connected_visual_demonstration_in_any_valid_medium_failed_minimum_yield",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_dual_exact_clip_plan_v1/manual_evaluation.json",
+        "artifact_sha256": "fb5cc34d0614202636394909e74fc4dc0943d5930e894d477a71b88222192255",
+        "exact_commentary_visual_clips": 2,
+        "manual_review_complete": true,
+        "reviewed": 32,
+        "source_disjoint": false
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_dual_vlm_exact_clip_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "exact_transformed_clip_acceptance_failed_blind_post_reveal_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_adaptive_edge_crop_v1/manual_evaluation.json",
+        "artifact_sha256": "48091c5f139e2f3772b73b0270c79416f1fc887a77daa60ad251c3e0a63b1879",
+        "manual_rendered_outputs_reviewed": 2,
+        "manual_review_complete": true,
+        "safety_abstentions": 9,
+        "reviewed": 11,
+        "source_disjoint": false
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_adaptive_edge_crop_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "adaptive_edge_text_crop_failed_mechanism_discovery_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_caption_crop_v1/manual_evaluation.json",
+        "artifact_sha256": "e20007073d0cc658f0d360e525dc3f14f134ba0fb6086ca3dc00be742f454507",
+        "manual_review_complete": true,
+        "parent_salvage_rate": 0.2727272727272727,
+        "parents": 11,
+        "reviewed": 22,
+        "source_disjoint": true
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_fixed_caption_crop_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "generic_fixed_crop_failed_known_failure_remediation_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_motion_crop_v1/manual_evaluation.json",
+        "artifact_sha256": "d2167d845aabe46ac4bcee00c7d67e8bba4c5d116f8cefe449c16d90d0d54465",
+        "manual_review_complete": true,
+        "parent_salvage_rate": 0.0,
+        "parents": 11,
+        "reviewed": 11,
+        "source_disjoint": true
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_motion_bbox_crop_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "motion_saliency_crop_failed_known_failure_remediation_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_ocr_mask_v1/manual_evaluation.json",
+        "artifact_sha256": "f3bdf8a2690e43e78e62d471f1a6d7bd95f4965c62a4b2ac5051fe1a98f292b0",
+        "manual_review_complete": true,
+        "parent_salvage_rate": 0.0,
+        "parents": 11,
+        "reviewed": 11,
+        "source_disjoint": true
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_multilingual_ocr_mask_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "unsafe_full_frame_overmasking_failed_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_ocr_line_mask_v2/manual_evaluation.json",
+        "artifact_sha256": "5f89278eefbc136635e9428b4119b559ffdde357a31c65cb76c264574f046d61",
+        "manual_rendered_outputs_reviewed": 3,
+        "manual_review_complete": true,
+        "safety_abstentions": 8,
+        "cohort_usable_rate": 0.0,
+        "reviewed": 11,
+        "source_disjoint": true
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_multilingual_ocr_line_mask_v2",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "guarded_partial_text_masking_failed_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": ["review_ranking"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260806_instructional_query_source_priority_v1/evaluation.json",
+          "artifact_sha256": "1a12f49d0978557cfddf2d4e93d0fc9c6bd6dfa8a34eff70c9c1c178ecb09507",
+          "cohort": "fresh_36",
+          "fn": 2,
+          "fp": 6,
+          "manual_review_complete": true,
+          "precision": 0.6,
+          "recall": 0.8181818181818182,
+          "reviewed": 36,
+          "selected": 15,
+          "source_disjoint": true,
+          "tp": 9
+        },
+        {
+          "artifact": "audit_runs/20260806_instructional_query_source_priority_v1/evaluation.json",
+          "artifact_sha256": "1a12f49d0978557cfddf2d4e93d0fc9c6bd6dfa8a34eff70c9c1c178ecb09507",
+          "cohort": "fresh_100",
+          "fn": 14,
+          "fp": 0,
+          "manual_review_complete": true,
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "reviewed": 100,
+          "selected": 7,
+          "source_disjoint": true,
+          "tp": 7
+        }
+      ],
+      "pillar": "instructional",
+      "priority_tier": "high_review",
+      "review_routes": ["instructional_demo_manual_review"],
+      "rule_id": "instructional_retro_query_source_priority_v1",
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "visual_demo_manual_review_priority_from_retro_scan_provenance_never_acceptance",
+      "trigger_values": ["retro_instr_scan"]
+    },
+    {
+      "allowed_uses": ["review_ranking", "shadow_lf_vote"],
+      "automatic_acceptance": false,
+      "evidence": [
+        {
+          "artifact": "audit_runs/20260806_instructional_polarity_review_priority_v1/evaluation.json",
+          "artifact_sha256": "4293223b395caf538fa0ce822b29ebd12468d31a83371d60e1c9da7ca85e98ee",
+          "cohort": "fresh_100",
+          "fn": 2,
+          "fp": 36,
+          "manual_review_complete": true,
+          "precision": 0.5068493150684932,
+          "recall": 0.9487179487179487,
+          "reviewed": 100,
+          "selected": 73,
+          "source_disjoint": true,
+          "tp": 37
+        },
+        {
+          "artifact": "audit_runs/20260806_instructional_polarity_review_priority_v1/evaluation.json",
+          "artifact_sha256": "4293223b395caf538fa0ce822b29ebd12468d31a83371d60e1c9da7ca85e98ee",
+          "cohort": "replication_100",
+          "fn": 2,
+          "fp": 54,
+          "manual_review_complete": true,
+          "precision": 0.2602739726027397,
+          "recall": 0.9047619047619048,
+          "reviewed": 100,
+          "selected": 73,
+          "source_disjoint": true,
+          "tp": 19
+        }
+      ],
+      "pillar": "instructional",
+      "priority_tier": "standard_above_explanation",
+      "review_routes": ["instructional_demo_manual_review"],
+      "rule_id": "instructional_non_explanation_review_priority_v1",
+      "shadow_lf_vote_contract": {
+        "audited_precision": null,
+        "audited_recall": 0.9333333333333333,
+        "evidence_basis": "20260806 fresh+replication 100-demo audits pooled (tp=56 fn=4); precision unstable across cohorts (0.26-0.51) so it is recorded null and must be learned by the label model, never assumed",
+        "evidence_family": "explicit_semantics",
+        "shadow_only": true,
+        "target": "demonstration_present",
+        "vote_when_triggered": 1
+      },
+      "status": "audited_for_declared_use",
+      "strict_route_exclusions": [],
+      "target": "high_recall_visual_demo_review_ordering_never_accept_or_reject",
+      "trigger_values": ["contrast", "correct", "violation"]
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_metadata_cues_v1/replication_summary.json",
+        "artifact_sha256": "cda53c2350f3629e691f7328b756e9933bbab7cdb8cd57ffa76aaed05994ca80",
+        "manual_review_complete": true,
+        "reviewed": 160,
+        "source_disjoint": true
+      }],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_metadata_script_cues_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "title_query_polarity_dialogue_and_action_cues_failed_cross_cohort_replication",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_tail_trim_v1/evaluation.json",
+        "artifact_sha256": "0472cbe87da86209c244866744f2fd49a1259746286c6c478134d0b3efec5465",
+        "manual_review_complete": true,
+        "parent_salvage_rate": 0.0,
+        "parents": 11,
+        "reviewed": 11,
+        "source_disjoint": false
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_fixed_tail_trim_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "fixed_last_half_trim_failed_known_caption_leak_remediation_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_visual_title_transfer_v1/transfer_summary.json",
+        "artifact_sha256": "3d296fe086a207161990c8ecd12deacce0f52c30ad0ada9095e121ad1602467e",
+        "fn": 7,
+        "fp": 21,
+        "manual_model_outputs_reviewed": 196,
+        "manual_review_complete": true,
+        "precision": 0.5333333333333333,
+        "precision_wilson_95": [0.3907745474012537, 0.670648679349887],
+        "recall": 0.7741935483870968,
+        "rendered": 98,
+        "reviewed": 100,
+        "selected": 45,
+        "source_disjoint": true,
+        "tp": 24
+      }],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_visual_title_conjunction_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "dual_vlm_visual_demo_and_scene_title_conjunction_failed_preregistered_precision_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_instructional_demo_adjudicator_v3_transfer_current/replication_summary.json",
+        "artifact_sha256": "177bd637ab973f6a8c56d18e0c70859ddce086889fe3a022d5075fda690d1d65",
+        "fn": 6,
+        "fp": 19,
+        "manual_model_outputs_reviewed": 98,
+        "manual_review_complete": true,
+        "model_output_visual_support_rate": 0.7857142857142857,
+        "precision": 0.5681818181818182,
+        "precision_wilson_95": [0.4222414699362943, 0.703172765914822],
+        "promotion_eligible": false,
+        "recall": 0.8064516129032258,
+        "rendered": 98,
+        "reviewed": 98,
+        "selected": 44,
+        "source_disjoint": true,
+        "tp": 25
+      }],
+      "pillar": "instructional",
+      "review_routes": [],
+      "rule_id": "instructional_demo_adjudicator_v3",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "connected_visual_demonstration_in_any_valid_medium_failed_precision_gate",
+      "trigger_values": []
+    },
+    {
+      "allowed_uses": [],
+      "automatic_acceptance": false,
+      "evidence": [{
+        "artifact": "audit_runs/20260806_commentary_hierarchical_full_source_v2/fresh_text_cohort_1/gold_v1/summary.json",
+        "artifact_sha256": "e7b66782ae8d06499ec4ea03343805858f77fe35c3c2727a17afb8bce08b858b",
+        "accepted_after_relabel": 16,
+        "accepted_exact": 0,
+        "manual_review_complete": true,
+        "reviewed": 30,
+        "source_disjoint": true
+      }],
+      "pillar": "commentary",
+      "review_routes": [],
+      "rule_id": "commentary_statement_quote_as_visual_action_v1",
+      "status": "failed_transfer",
+      "strict_route_exclusions": [],
+      "target": "raw_detector_statement_phrase_failed_as_actor_action_target_visual_label",
+      "trigger_values": []
+    }
+  ],
+  "schema_version": 1,
+  "version": "audited_weak_signals_v1"
+}

@@ -1,0 +1,752 @@
+# Evidence-backed weak-supervision candidate policy.
+#
+# IMPORTANT: no production code reads this file. It is deliberately inactive
+# until a frozen full-corpus shadow diff and 100% review of changed outputs pass.
+version: weak_supervision_shadow_v1
+active: false
+created_at: "2026-07-21"
+intended_final_vlm: gpt-5.6-sol
+current_manual_model_label: codex-manual-review
+
+global_release_gate:
+  uncertain: fail_closed_to_review
+  missing_or_invalid_judgment: fail_closed_to_review
+  changed_outputs_to_review: 100_percent
+  allowed_unexplained_false_accepts: 0
+  media_transform_policy: render_hash_and_reaudit_exact_output
+  fresh_audit_sampling: exclude_any_source_video_with_prior_judgment_or_prior_batch_assignment
+  source_fields_are_hints_only:
+    - title
+    - category
+    - query
+    - detector_signal
+    - detector_norm
+
+collection_scheduler:
+  production_change_authorized: false
+  observed_20260721_0746:
+    hours_with_only_instr_family_processed: 24
+    processed_last_24h: {instructional: 1086, commentary: 92, dropped_instructional_fallbacks: 1673, witnessed: 0, noninstructional_total: 0}
+    active_query_priorities: {instructional_max: 3.0, commentary_max: 2.5, witnessed_max: 2.0, null_max: 1.2}
+    root_cause: strict_priority_before_lru_causes_lower_priority_family_starvation
+  observed_20260721_0820:
+    batch_input: {pending_transcribe: 274, pending_detect: 0}
+    batch_output: {instructional: 116, commentary: 5, drop: 143, miss: 4}
+    postbatch_backlog: {pending_transcribe: 65, pending_detect: 0}
+    processed_query_families_last_hour: {instructional_query: 268, commentary_query: 0, witnessed_query: 0, null_query: 0}
+    crawler_healthy: true
+    finding: live strict-priority starvation persists_after_successful_batch
+  observed_20260721_0907:
+    queue: {pending_transcribe: 147, pending_detect: 0, oldest_hours: 1.0}
+    decision: skipped_below_150_or_4h_threshold
+    gpu_touched: false
+    fresh_routed_pool_after_source_exclusion: {instructional: 383, commentary: 0, witnessed: 0}
+    finding: no_new_detection_cycle_and_live_strict_priority_starvation_persists
+  observed_20260721_0920_manual_threshold_run:
+    queue_at_start: {pending_transcribe: 178, pending_detect: 0, oldest_hours: 1.2}
+    gpu: 5
+    transcription: {transcribed: 176, errors: 2, minutes: 7}
+    detection: {instructional: 78, commentary: 10, drop: 86, miss: 2, minutes: 2}
+    postbatch: {pending_transcribe: 23, pending_detect: 0, crawler_healthy: true}
+    finding: healthy_batch_but_no_witnessed_routes_and_instructional_priority_domination_persists
+  observed_20260721_1104:
+    queue: {pending_transcribe: 295, pending_detect: 0, oldest_hours: 1.74}
+    crawler_healthy: true
+    allowed_gpus_free: [5, 6, 7]
+    decision: threshold_qualified_wait_for_1107_scheduled_flocked_batch
+    gpu_touched_by_monitor: false
+  observed_20260721_1118_scheduled_batch:
+    queue_selected: 303
+    transcription: {transcribed: 298, errors: 5, minutes: 9}
+    detection: {instructional: 124, commentary: 8, drop: 162, miss: 4, minutes: 2}
+    postbatch: {pending_transcribe: 28, pending_detect: 0, crawler_healthy: true}
+    gpu: 5
+    reserved_gpus_touched: false
+    finding: healthy_batch_with_continued_instructional_dominance_and_no_witnessed_routes
+  observed_20260721_1410:
+    queue: {pending_transcribe: 147, pending_detect: 0}
+    crawler_pid: 22849
+    crawler_healthy: true
+    fresh_routed_pool_1_5h: {instructional: 476, commentary_videos: 10, witnessed: 0}
+    finding: crawler_and_detection_healthy_but_live_output_mix_still_has_no_witnessed_routes
+  audit_policy:
+    use_read_only_out_of_queue_canaries_until_a_family_quota_is_audited: true
+    no_priority_or_live_queue_change_from_scheduler_diagnostics_alone: true
+
+instructional:
+  evidence:
+    explanation_v4: {reviewed: 71, clean: 0, semantic_relabel_or_repair: 5, reject: 66}
+    nonexplanation_v4: {reviewed: 24, clean: 1, repair_candidates: 6, reject: 11, uncertain: 6}
+    expansion_v2: {reviewed: 24, clean: 1, semantic_relabel: 4, rendered_repair_candidates: 2, reject: 17}
+    frame_window_recut_calibration: {reviewed: 4, clean: 2, relabel: 1, reject: 1, exact_mp4_persisted: false}
+    exact_hashed_mp4_repairs: {reviewed: 4, clean: 1, relabel: 1, reject: 2}
+    rendered_overlay_crops: {reviewed: 2, accept: 0, reject: 2}
+    matched_query_source_confirmation:
+      retro_instr_scan: {reviewed: 12, source_usable: 7, uncertain: 1, reject: 4, exact_recut_pass: 0}
+      current_instructional_queries: {reviewed: 12, source_usable: 0, uncertain: 0, reject: 12}
+    matched_explanation_query_source:
+      instructional: {reviewed: 24, clean: 0, semantic_relabel: 0, reject: 24}
+      llm_expand: {reviewed: 8, clean: 0, semantic_relabel: 1, reject: 7}
+      related: {reviewed: 8, clean: 0, semantic_relabel: 2, reject: 6}
+      combined: {reviewed: 40, clean: 0, semantic_relabel: 3, reject: 37}
+      embedded_demo_boundary_check: {reviewed: 1, viable_exact_recut: 0, reject: 1}
+    contrast_polarity_exhaustive_nongeneric_plus_current_sample:
+      source_clips: {reviewed: 30, clean: 0, semantic_relabel: 2, reject: 24, uncertain_repair_candidate: 4}
+      eventual_usable_after_exact_repairs: {usable: 4, total: 30}
+      by_query_source:
+        retro_instr_scan: {reviewed: 5, source_semantic_pass: 1, exact_repair_pass: 0}
+        related: {reviewed: 4, source_semantic_pass: 0, exact_repair_pass: 1}
+        llm_expand: {reviewed: 13, source_semantic_pass: 1, exact_repair_pass: 0}
+        instructional: {reviewed: 8, source_semantic_pass: 0, exact_repair_pass: 1}
+      valid_rendered_artifacts: {reviewed: 7, accept: 2, reject: 5}
+      invalid_unimported_artifacts: {count: 1, reason: dropped_recursive_audio_provenance}
+    violation_polarity_balanced_fresh_sample:
+      source_clips: {reviewed: 24, clean: 1, semantic_relabel: 4, reject: 14, exact_repair_candidate: 5}
+      exact_repair_artifacts: {reviewed: 6, accept: 4, reject: 2}
+      eventual_usable_after_exact_repairs: {usable: 9, total: 24, rate: 0.375}
+      by_query_source_eventual:
+        retro_instr_scan: {reviewed: 12, usable: 7}
+        instructional: {reviewed: 11, usable: 2}
+        related: {reviewed: 1, usable: 0, too_small_for_rule: true}
+      sampler_defect_recovery:
+        duplicated_rows_detected_and_reaudited: 3
+        replacements_reviewed: 3
+        fix: exclude_any_prior_judgment_or_prior_batch_assignment
+    hourly_20260721_0418:
+      pool: {instructional: 296, witnessed: 0, commentary: 6}
+      instructional_lightweight: {reviewed: 12, visual_demo: 1, strict_source_pass: 0, v4_followup: 1}
+      instructional_v4_followup: {reviewed: 1, semantic_relabel: 1}
+    hourly_20260721_0504:
+      pool: {instructional: 296, witnessed: 0, commentary: 6}
+      instructional_lightweight: {reviewed: 12, norm_relevant_visual_demo: 2, strict_source_pass: 1, v4_followup: 3}
+      instructional_v4_followup: {reviewed: 3, clean: 1, semantic_relabel: 1, reject: 1}
+      commentary_full_context: {reviewed: 6, clean: 0, semantic_relabel: 1, reject: 5}
+      witnessed: {reviewed: 0, reason: no_new_outputs}
+      pipeline_0507: {pending_transcribe: 114, pending_detect: 0, action: skipped_below_150_or_4h_threshold}
+    hourly_20260721_0613_postbatch:
+      pipeline: {captured: 223, instructional: 81, commentary: 11, drop: 131, miss: 1, pending_detect_after: 0}
+      pool: {instructional: 389, witnessed: 0, commentary_videos: 9}
+      instructional_v4_source: {reviewed: 24, semantic_relabel: 2, exact_media_repair_candidate: 1, reject: 21}
+      instructional_exact_spatial_crop_mute: {reviewed: 1, accept: 1, reject: 0}
+      instructional_eventual: {usable: 3, total: 24, rate: 0.125}
+      commentary_full_context: {videos: 9, statements_reviewed: 19, clean: 1, semantic_relabel: 7, reject: 11, corrected_unique_event_clusters: 4}
+      witnessed: {reviewed: 0, reason: no_new_outputs}
+    frozen_prompt_comparison_20260721_0613:
+      source_videos: 24
+      current_detector_outputs: 155
+      shadow_v2: {outputs: 12, clean: 1, repair_candidate: 2, reject: 9, raw_precision: 0.0833, production_eligible: false}
+      shadow_v3: {outputs: 14, clean: 2, repair_candidate: 3, reject: 9, raw_precision: 0.1429, production_eligible: false}
+      shadow_v3_exact_repairs: {artifacts_reviewed: 3, accept: 2, accept_after_relabel: 1, reject: 0, eventual_usable: 5, total_outputs: 14, eventual_usable_rate: 0.3571, source_outputs_remain_nonaccepted: true}
+      shadow_v3_deterministic_contract:
+        outputs_reviewed: 14
+        duration_bounds: {minimum_seconds: 2, ordinary_maximum_seconds: 30, reported_visible_action_maximum_seconds: 45}
+        filtered: 4
+        filtered_manual_rejects: 4
+        filtered_manual_accepts: 0
+        survivors: 10
+        clean_survivors: 2
+        definite_false_positive_survivors: 5
+        unresolved_repair_survivors: 3
+        production_eligible: false
+    hourly_20260721_070623:
+      freshness:
+        raw_pool: {instructional: 389, witnessed: 0, commentary: 9}
+        excluded_prior_source_rows: {instructional: 149, witnessed: 0, commentary: 9}
+        fresh_pool: {instructional: 240, witnessed: 0, commentary: 0}
+      instructional_v4:
+        source_clips: {reviewed: 24, frames_reviewed: 259, clean: 0, semantic_relabel: 1, reject: 23, uncertain: 0}
+        eventual: {usable: 1, total: 24, rate: 0.0417}
+        by_polarity:
+          violation: {reviewed: 5, usable: 1}
+          correct: {reviewed: 7, usable: 0}
+          explanation: {reviewed: 12, usable: 0}
+      commentary: {reviewed: 0, reason: all_raw_window_sources_previously_audited}
+      witnessed: {reviewed: 0, reason: no_fresh_outputs}
+    hourly_20260721_082006_postbatch:
+      freshness:
+        raw_pool: {instructional: 542, witnessed: 0, commentary_videos: 5}
+        excluded_prior_source_rows: {instructional: 0, witnessed: 0, commentary: 0}
+      instructional_v4:
+        source_clips: {reviewed: 24, frames_reviewed: 228, clean: 2, reject: 22, uncertain: 0}
+        yield: {usable: 2, total: 24, rate: 0.0833}
+        by_polarity:
+          correct: {reviewed: 8, usable: 1}
+          violation: {reviewed: 7, usable: 1}
+          explanation: {reviewed: 9, usable: 0}
+        top_overlapping_failures: {no_visible_temporal_demo: 15, off_topic: 11, not_social_norm: 6, explanation_or_talking_head: 5}
+      accepted_media: {animation: 2}
+      all_query_source: instructional
+    hourly_20260721_090803:
+      freshness:
+        raw_pool: {instructional: 542, witnessed: 0, commentary_videos: 5}
+        excluded_prior_source_rows: {instructional: 159, witnessed: 0, commentary: 5}
+        fresh_pool: {instructional: 383, witnessed: 0, commentary_videos: 0}
+      instructional_v4:
+        source_clips: {reviewed: 24, frames_reviewed: 262, clean: 1, relabel_norm: 1, reject: 22, uncertain: 0}
+        yield: {usable: 2, total: 24, rate: 0.0833}
+        by_polarity:
+          correct: {reviewed: 8, usable: 1}
+          explanation: {reviewed: 10, usable: 0}
+          violation: {reviewed: 5, usable: 1}
+          contrast: {reviewed: 1, usable: 0}
+        top_overlapping_failures: {no_visual_demo: 16, not_social_norm: 15, off_topic: 15, label_leak: 12, technical_or_procedural: 9}
+      accepted_media: {live_action: 2}
+      all_query_source: instructional
+    hourly_20260721_092952_postbatch:
+      freshness:
+        raw_pool: {instructional: 339, witnessed: 0, commentary_videos: 10}
+        excluded_prior_source_rows: {instructional: 0, witnessed: 0, commentary: 0}
+      instructional_v4:
+        source_clips: {reviewed: 24, frames_reviewed: 270, clean: 0, relabel_norm: 1, reject: 23, uncertain: 0}
+        yield: {usable: 1, total: 24, rate: 0.0417}
+        by_polarity:
+          correct: {reviewed: 8, usable: 1}
+          explanation: {reviewed: 9, usable: 0}
+          violation: {reviewed: 7, usable: 0}
+        top_overlapping_failures: {no_visual_demo: 16, label_leak: 14, not_social_norm: 12, off_topic: 12, technical_or_procedural: 9}
+      commentary_v2:
+        videos: 10
+        statements_reviewed_with_context: 24
+        usable_statements: 13
+        clean: 2
+        relabel: 11
+        reject: 11
+        manually_retained_event_behavior_clusters: 9
+      witnessed: {reviewed: 0, reason: no_routed_outputs}
+    instructional_search_shadow_v1_20260721:
+      enumerated_titles_reviewed: 200
+      selected_sources_reviewed: 16
+      dense_review: {sources: 9, frames: 469, transcripts: 9, forced_language_reruns: 1}
+      exact_demo_artifacts: {rendered_and_reviewed: 7, frames: 112, accept: 7}
+      source_decisions: {accept_target_match: 4, reroute_usable_demo: 3, reject: 9}
+      target_matched_exact_demo_yield: 0.25
+      recoverable_exact_demo_yield: 0.4375
+      production_eligible: false
+      finding: query_terms_often_drop_the_norm_noun_so_recoverable_demo_yield_must_not_be_reported_as_query_target_precision
+    instructional_search_shadow_v2_20260721:
+      enumerated_titles_reviewed: 160
+      selected_sources: 15
+      rendered_and_reviewed: 14
+      download_failed_fail_closed: 1
+      dense_review: {sources: 3, frames: 272, transcripts: 2}
+      source_decisions: {independent_target_accept: 0, duplicate_prior_episode: 2, reroute_research_candidate: 1, reject_including_download_failure: 12}
+      source_disjoint_target_accept_rate: 0.0
+      unique_recoverable_reroute_rate: 0.0667
+      reroute_artifacts: {reviewed: 3, frames: 22, final_clean_action_candidates: 1, private_evidence_only: 1, superseded_overlay_rejects: 1}
+      duplicate_episode_evidence: {current_uids: [x2syow8, x32dvdf], prior_uid: x2rcgal, count_as_replication: false}
+      production_eligible: false
+      finding: no_v2_query_produced_an_independent_target_match_and_the_only_unique_demo_was_an_off_target_harassment_reroute
+    search_episode_dedup_shadow_v1_20260721:
+      rendered_sources: 30
+      all_pairs_compared: 435
+      candidate_pairs: 4
+      candidate_pairs_manually_reviewed: 4
+      confirmed_duplicate_pairs: 4
+      false_candidate_pairs: 0
+      confirmed_components: 2
+      automatic_action: false
+      approved_use: flag_for_mandatory_manual_review_before_counting_source_disjoint_replication
+      not_approved: [automatic_delete, automatic_reject, corpus_mutation]
+      transfer_and_recall_established: false
+    target_response_search_shadow_v1_20260721:
+      enumerated_titles_reviewed: 160
+      selected_sources: 16
+      rendered_and_reviewed: 15
+      download_failed_fail_closed: 1
+      dense_review: {sources: 8, frames: 672, successful_transcripts: 7, no_audio_fail_closed: 1}
+      source_decisions: {independent_direct_target_response_accept: 0, existing_bystander_witnessed_accept: 1, instructional_reroute_sources: 5, reject_including_download_failure: 10}
+      instructional_reroute_demos: {clean: 4, externally_narrated_labeled: 3, total: 7}
+      exact_artifacts: {v1_reviewed: 12, v1_pass: 10, v1_reject_and_repair: 2, v2_repairs_reviewed: 2, v2_repairs_pass: 2}
+      production_eligible: false
+      finding: direct_target_response_expansion_failed_but_produced_sources_with_real_demos_are_high_value_instructional_reroutes
+    hourly_20260721_111942_postbatch:
+      freshness:
+        raw_pool: {instructional_demo_rows: 577, witnessed: 0, commentary_videos: 7}
+        excluded_prior_source_rows: {instructional: 0, witnessed: 0, commentary: 0}
+      instructional_full_dense_manual_review:
+        source_clips: 24
+        sparse_frames_reviewed: 72
+        dense_frames_reviewed: 363
+        all_exact_spans_temporally_covered: true
+        any_visual_demonstration: {count: 8, rate: 0.3333}
+        social_norm_relevant_demonstration: {count: 5, rate: 0.2083}
+        current_weak_label_valid: {count: 2, rate: 0.0833}
+        valid_media: {staged_roleplay: 1, narrated_institutional_broll_training_only: 1}
+        repairable_not_accepted: {overbroad_multievent_span: 1, norm_or_polarity_mismatch: 2}
+        demonstrated_but_non_social: {technical_or_animal: 3}
+        no_demo: 16
+      production_eligible: false
+      artifact: audit_runs/20260721_111942_hourly/manual_summary.json
+    transcript_detector_shadow_v4_20260721_111942:
+      source_videos: 24
+      shadow_candidate_sources: 5
+      raw_outputs: 16
+      outputs_manually_reviewed: 16
+      rendered_outputs: 15
+      invalid_outputs_failed_closed: 1
+      exact_span_frames_reviewed: 359
+      deterministic_contract: {passed: 11, strict_manual_accept: 1, false_accept: 10, precision: 0.0909}
+      full_output: {strict_accept: 1, reject: 15, precision: 0.0625}
+      false_negatives: [narrated_hospital_accommodation_demo, truncated_forgotten_anniversary_roleplay]
+      production_eligible: false
+      finding: transcript_only_evidence_kind_is_not_visual_evidence_and_must_never_be_a_keep_gate
+      artifact: audit_runs/20260721_111942_hourly/instructional_shadow_v4/manual_summary.json
+    hourly_20260721_131910:
+      freshness:
+        raw_pool: {instructional_demo_rows: 145, witnessed: 0, commentary_videos: 0}
+        selected: {instructional: 24, witnessed: 0, commentary: 0}
+        source_disjoint: true
+      instructional_full_dense_manual_review:
+        source_clips: 24
+        frames_reviewed: 569
+        contact_sheet_pages_reviewed: 49
+        aligned_transcript_spans_reviewed: 24
+        any_temporal_demonstration: {count: 10, rate: 0.4167}
+        social_norm_relevant_demonstration: {count: 3, rate: 0.125}
+        current_weak_label_valid: {count: 2, rate: 0.0833}
+        by_polarity:
+          correct: {reviewed: 10, accepted: 2}
+          violation: {reviewed: 2, accepted: 0}
+          explanation: {reviewed: 12, accepted: 0}
+        top_overlapping_failures: {off_topic: 14, not_social_norm: 14, no_visual_demo: 14, technical_or_procedural: 7, talking_head_or_lecture: 7, label_leak: 5}
+        all_outputs_manually_reviewed: true
+        ledger_judgments_imported: 24
+      production_eligible: false
+      finding: fresh_current_instructional_precision_remains_2_of_24_and_transcript_grounding_does_not_establish_a_demo
+      artifact: audit_runs/20260721_131910_hourly/manual_summary.json
+    hourly_20260721_141041:
+      freshness:
+        raw_pool: {instructional_demo_rows: 476, witnessed: 0, commentary_videos: 10}
+        selected: {instructional: 24, witnessed: 0, commentary_videos: 10}
+      instructional_full_dense_manual_review:
+        source_clips: 24
+        frames_reviewed: 438
+        exact_borderline_mp4s_reviewed: 4
+        decisions: {clean: 1, repair: 0, reject: 23, uncertain: 0}
+        yield: {usable: 1, total: 24, rate: 0.0417}
+        by_polarity:
+          correct: {reviewed: 10, accepted: 1}
+          explanation: {reviewed: 10, accepted: 0}
+          violation: {reviewed: 4, accepted: 0}
+        accepted_media: {animation: 1}
+        top_overlapping_failures: {no_visual_demo: 18, not_social_norm: 16, off_topic: 16, technical_or_procedural: 8, talking_head_or_lecture: 5, norm_mismatch: 5}
+      commentary_v2:
+        videos: 10
+        statements_reviewed_with_20s_context: 23
+        decisions: {clean: 1, relabel: 3, reject: 19}
+        usable_statement_yield: 0.1739
+        retained_event_behavior_clusters: 4
+      witnessed: {reviewed: 0, reason: no_fresh_routed_outputs}
+      all_outputs_manually_reviewed: true
+      ledger_judgments_imported: {instructional: 24, commentary: 23}
+      production_eligible: false
+      finding: instructional_current-label_precision_remains_1_of_24_and_commentary_fails_mainly_on_missing_act_or_missing_stance
+      artifact: audit_runs/20260721_141041_hourly/manual_summary.json
+    witnessed_reroute_instructional_v4: {reviewed: 1, semantic_relabel: 1}
+    witnessed_search_reroute_followup_20260721:
+      candidates_reviewed: 3
+      exact_repair_artifacts_reviewed: 1
+      accept: 0
+      reject: 3
+      failure_modes: [occluded_action_transition, behavior_unresolved_without_answer_overlay, ownership_and_action_ambiguous]
+  search_rules:
+    # Ranking only: the existing samples are too small to deactivate terms.
+    rank_up_hypotheses: ["social story", "what would you do"]
+    rank_down_hypotheses: ["explained", "tips", "lesson", "how to", "bare scenario", "bare role play"]
+    source_ranking_hypothesis:
+      retro_instr_scan: {reviewed: 50, source_usable: 25}
+      current_instructional_queries: {reviewed: 228, source_usable: 14}
+      llm_expand: {reviewed: 23, source_usable: 2}
+      related: {reviewed: 13, source_usable: 2}
+      action: rank_retro_scan_above_current_instructional_llm_expand_and_related_but_do_not_auto_accept
+    audited_category_ranking_hypotheses:
+      rank_up: [discrimination_harassment, authority_ritual, reciprocity_ingratitude]
+      rank_down: [instr_family, instr_crosscultural, instr_automobile, instr_consent, instr_digital, instr_elder_intergen]
+      basis: "latest source judgments: rank-up cells remain >=3/4 usable; listed current instr_* cells have at most 2 usable and <=8.7% yield with 8-23 reviewed"
+      action: ranking_only_no_deactivation
+    never_accept_from_query_or_category_alone: true
+    explanation_query_source_is_retrieval_only: true
+    explanation_source_cells_are_too_small_for_deactivation_or_promotion: true
+    require_video_level_social_relevance_before_demo_extraction: true
+    fixed_demos_per_video_cap: null
+    contrast_query_and_polarity_are_retrieval_only: true
+    contrast_acceptance:
+      require: both_behavior_poles_visibly_resolved_in_the_exact_interval
+      verbal_comparison_without_two_visible_poles: reject
+      one_clear_behavior_pole: explicitly_relabel_to_violation_or_correct
+    violation_polarity_is_retrieval_only: true
+    violation_query_source_ranking:
+      retro_instr_scan: "7/12 eventual usable in the fresh balanced cohort"
+      instructional: "2/11 eventual usable in the fresh balanced cohort"
+      action: rank_retro_above_current_instructional_for_violation_retrieval_but_never_auto_accept
+    explicit_scenario_shadow_v1:
+      status: audited_not_promoted
+      rank_up_for_source_disjoint_replication:
+        - workplace_discrimination_role_play_scenario
+        - what_would_you_do_discrimination_scenario
+        - social_experiment_bystander_intervenes_bullying
+      do_not_replicate_without_rewrite:
+        - rude_customer_service_role_play_scenario
+        - consent_communication_role_play_scenario
+        - bullying_bystander_intervention_role_play
+        - expected_unexpected_behavior_social_skills_video
+        - classroom_social_story_sharing_taking_turns
+      query_target_match_is_separate_from_recoverable_demo: true
+      off_target_demo: reroute_for_fresh_category_label_review_never_inherit_query_label
+      exact_evidence: full_audiovisual_review_and_hash_verified_demo_span
+      require_source_disjoint_replication_before_any_live_query_change: true
+    explicit_scenario_shadow_v2:
+      status: failed_zero_independent_target_accepts_do_not_promote
+      all_queries_failed_promotion: true
+      target_matches_that_are_prior_episode_duplicates: 2
+      off_target_reroute_is_not_query_success: true
+      require_episode_level_not_just_uid_level_source_disjointness: true
+      target_response_harassment_candidate:
+        status: separate_read_only_vein_only
+        training_action_must_end_before_first_refusal_or_objection: true
+        reaction_evidence_must_remain_private: true
+        remove_external_answer_overlay_then_reaudit_exact_render: true
+        require_source_disjoint_replication_before_pillar_policy_change: true
+    episode_disjointness:
+      uid_disjointness_alone_is_insufficient: true
+      candidate_generator:
+        inputs: [relative_duration, temporal_perceptual_frame_hashes, title_token_overlap]
+        current_calibration: four_of_four_candidates_confirmed_across_435_pairs
+        automatic_rejection: false
+      count_as_replication_only_after_manual_same_episode_review_is_negative: true
+    produced_or_staged_sources_with_a_concrete_demo:
+      witnessed_route: reject
+      instructional_route: fresh_exact_demo_review
+      evidence: "Five of 16 target-response search sources yielded seven exact instructional demos; none validated a new witnessed target-response rule."
+  keep_rules:
+    accepted_media: any_medium_if_the_exact_clip_contains_a_resolved_social_demo_and_all_gates_pass
+    medium_or_genre_alone_is_never_a_keep_or_reject_rule: true
+    require:
+      - concrete_social_actor_action_target_or_shared_context
+      - visible_temporal_demo_or_visibly_grounded_in_character_speech_act
+      - resolved_polarity_in_violation_correct_contrast
+      - concrete_normalized_behavior_and_norm
+      - no_unremoved_visual_or_audio_answer_leak
+      - semantic_domain_match_alone_does_not_count_as_a_demo
+    reject:
+      - explanation_only_or_talking_head
+      - static_card_or_unrelated_broll
+      - technical_or_legal_procedure_without_social_expectation
+      - generic_safety_medical_animal_or_self_improvement
+      - off_topic_or_malformed_non_social_norm
+      - in_character_lecture_without_norm_relevant_action
+      - visible_activity_that_is_only_a_technical_medical_fitness_or_performance_skill
+    explanation_polarity: unresolved_scene_polarity_not_a_positive_label
+    deterministic_shadow_contract:
+      status: audited_shadow_only
+      preserve_raw_outputs_for_audit: true
+      require_grounded: [start_quote, end_quote, label_quote]
+      require_nonempty: [actor, behavior, target_or_shared_context, norm]
+      allowed_polarity: [violation, correct, contrast]
+      duration_seconds:
+        minimum: 2
+        maximum: 30
+        reported_visible_action_maximum: 45
+      evidence: "On 14/14 manually reviewed v3 outputs, the contract removed four manual rejects and zero accepts; 2/10 survivors were clean, so it is not a sufficient keep gate."
+      automatic_accept: false
+    transcript_only_detector_is_not_a_keep_gate: true
+    transcript_claimed_evidence_kind_is_untrusted_until_visual_verification: true
+    final_accept_requires_visual_review_or_a_validated_vlm_judgment: true
+    visual_verification_gate:
+      require:
+        - behavior_is_actually_shown_or_performed_in_a_grounded_social_exchange
+        - behavior_is_not_only_described_or_reported
+        - one_resolved_occurrence_in_the_exact_interval
+        - norm_and_polarity_match_that_same_occurrence
+        - temporal_and_cultural_scope_preserved_when_the_rule_is_context_specific
+      current_closed_vlm_status: unavailable_no_approved_api_credential
+      current_server_vlm_status: no_vision_model_cached_or_serving
+      automatic_accept: false
+      evidence: "Only 1/11 transcript-shadow-v4 outputs that passed deterministic checks survived complete visual and transcript review; ten were false accepts, chiefly described or reported actions not shown in the pixels."
+    ordinary_in_character_subtitles: permitted_unless_they_supply_an_external_answer_label
+    instructional_demo_tiers:
+      clean_demo:
+        require: no_external_answer_label_overlapping_the_exact_demo
+        eligible_for: [weak_supervision_training, leakage_sensitive_evaluation_after_all_other_gates]
+      labeled_demo:
+        require: [concrete_enacted_social_demo, explicit_external_narration_or_answer_label_tracked]
+        eligible_for: [weak_supervision_training]
+        exclude_from: [leakage_sensitive_evaluation, audio_enabled_label_prediction_benchmarks]
+        evidence: "Three manually reviewed TV social-experiment intervals contained distinct enacted harassment/intervention demos but overlapping external narration; retaining a separate tier preserves valid demos without calling them leakage-clean."
+      context_prompt_is_not_automatically_an_answer_label:
+        require: prompt_sets_up_roles_or_request_without_stating_the_correctness_or_violation_judgment
+        evidence: "The reviewed blindfolded-Muslim trust prompt was followed by a complete hug interaction; later prescriptive advocacy cards were excluded."
+    demos_per_video:
+      fixed_cap: null
+      require_each_demo_to_be_a_distinct_enacted_occurrence_with_separate_exact_bounds: true
+      evidence: "One TV source contained three semantically distinct, fully reviewed harassment/intervention scenarios; a fixed one-demo cap would discard valid supervision."
+    exact_occurrence_localization:
+      require_one_resolved_occurrence_per_clip: true
+      multievent_or_multistory_span: reject_until_each_occurrence_is_separately_recut_and_reaudited
+      evidence: "The 11:19 cohort contained a 121-second children-story span joining several prank, property, and balloon events under one sharing label; it failed despite containing relevant action."
+    norm_and_polarity_match:
+      require_demonstrated_act_to_support_both_the_normalized_norm_and_polarity: true
+      reverse_polarity_or_underspecified_norm: reject_or_render_relabel_candidate_then_reaudit
+      evidence: "Two of five social-demo clips in the 11:19 cohort failed because an environmental satire was labeled correct/caring and a justified reduced tip was labeled as a small-tip violation."
+    temporal_and_cultural_scope:
+      context_specific_norms_must_not_be_emitted_as_current_universal_rules: true
+      missing_scope: reject_or_render_relabel_candidate_then_reaudit
+      evidence: "Two clear demonstrations in a 1970 US Army etiquette film taught gendered introduction and ordering conventions; both failed as unscoped present-day universal labels."
+    narrated_institutional_broll:
+      accepted_only_as: labeled_demo
+      require: concrete_visible_implementation_of_the_norm
+      evidence: "A hospital worker showing a kosher menu concretely demonstrated religious dietary accommodation, but overlapping narration limits it to training-only weak supervision."
+    repairs:
+      tighten_to_demo:
+        status: supported_candidate_only
+        automatic_accept: false
+        evidence: "10/18 ledgered exact temporal repairs passed; 8/18 failed, including target-off-camera, prior-action, leakage, and unrelated-boundary cases"
+      crop_label_overlay:
+        status: supported_candidate_only
+        automatic_accept: false
+        evidence: "1/4 direct rendered spatial crops passed; the sole pass required an arbitrary right-panel crop plus audio removal and full exact-artifact review, while three simpler crops failed"
+      strip_explanatory_audio:
+        status: chainable_candidate_only
+        evidence: "1/2 ledgered audio-removal artifacts passed; the passing artifact followed an exact visual recut, while the failed direct repair retained a visual answer card"
+      exact_repaired_artifact:
+        require: [persisted_mp4, mp4_sha256, repaired_frame_manifest_sha256, verified_duration, verified_audio_stream_count, recursive_transform_provenance, recursive_label_transcript_provenance, full_postrepair_audit]
+      relabel_norm_or_polarity:
+        status: requires_explicit_reviewed_normalization
+
+witnessed:
+  evidence:
+    reviewed: 64
+    strict_accept: 0
+    reroute_instructional: 8
+    reject: 55
+    uncertain: 1
+    source_disjoint_20260721_1335:
+      source_clips: 16
+      initial_frames_reviewed: 256
+      dense_escalation: {clips: 2, frames: 140}
+      aligned_transcript_spans_reviewed: 16
+      decisions: {strict_accept: 0, reroute_instructional: 1, reject: 15, uncertain: 0}
+      top_overlapping_failures: {no_clean_pre_reaction_clip: 9, label_mismatch: 9, no_social_action: 8, reaction_not_normative: 7, insufficient_temporal_evidence: 7, news_or_commentary: 5, causality_not_visible: 5}
+      production_eligible: false
+      finding: two_organic_looking_candidates_failed_closed_after_4fps_expansion_because_the_causal_action_remained_occluded
+      artifact: audit_runs/20260721_1335_source_disjoint/manual_summary.json
+    matched_query_source_confirmation:
+      related: {reviewed: 8, strict_accept: 0, reroute_instructional: 1, reject: 7}
+      taxonomy: {reviewed: 8, strict_accept: 0, reroute_instructional: 0, reject: 8}
+    latest_expansion_failures_overlap:
+      label_mismatch: 13
+      no_visible_social_action: 9
+      no_on_scene_reaction: 8
+      scripted_or_staged: 8
+      news_or_commentary: 7
+      off_topic: 7
+      generic_affect: 7
+    search_shadow_v1_rank_sample:
+      selected: 20
+      exact_rendered_and_reviewed: 19
+      download_failed: 1
+      strict_accept: 0
+      existing_baseline: {selected: 8, strict_accept: 0, reroute_instructional_candidate: 2, reject: 6}
+      paired_action_reaction_v1: {selected: 12, strict_accept: 0, reroute_instructional_candidate: 1, reroute_commentary_candidate: 1, reject: 9, download_failed: 1}
+      production_eligible: false
+      failure: paired_wording_dropped_action_nouns_and_closest_organic_clips_failed_clean_pre_reaction_or_pixel_grounding
+      instructional_reroute_followup: {reviewed: 3, accept: 0, reject: 3}
+    search_shadow_v2_rank_sample:
+      enumerated_titles_reviewed: 160
+      selected: 14
+      exact_rendered_and_reviewed: 13
+      download_failed: 1
+      dense_frames_reviewed: 168
+      transcribed_ambiguity_cases: 4
+      strict_accept_after_exact_splice: 1
+      strict_yield_selected: 0.0714
+      production_eligible: false
+      supported_ranking_candidate: driver_attacks_cyclist_witnesses_intervene
+      exact_acceptance_artifact: {uid: dailymotion__x55wu8f, interval_seconds: [10.5, 13.3], violation_audio_seconds: [10.949, 12.97], first_reaction_second: 14.731, reaction_excluded: true}
+      finding: one_exact_pass_is_evidence_for_source_disjoint_replication_not_live_promotion
+    target_response_search_shadow_v1:
+      enumerated_titles_reviewed: 160
+      selected: 16
+      rendered_and_reviewed: 15
+      dense_frames_reviewed: 672
+      independent_direct_target_response_accept: 0
+      existing_bystander_witnessed_accept: 1
+      instructional_reroute_sources: 5
+      production_eligible: false
+      finding: direct_target_response_is_not_supported_as_a_new_keep_signal
+  search_rules:
+    never_route_query_families_to_witnessed: ["instr_*", "comm_*"]
+    related_expansion_requires_prior_visual_accept: true
+    query_family_expansion_gate:
+      require: strict_witnessed_accept_in_manually_reviewed_calibration
+      current_related_status: failed_zero_of_23_reviewed
+      current_taxonomy_status: failed_zero_of_19_reviewed
+    news_streamer_movie_tv_and_animation: route_to_non_witnessed_review
+    paired_action_reaction_v1: failed_zero_of_12_rank_sample_do_not_promote
+    targeted_confrontation_v2:
+      status: one_of_14_passed_only_after_exact_splice_do_not_promote
+      rank_up_for_next_read_only_canary: [driver_attacks_cyclist_witnesses_intervene]
+      require_source_disjoint_replication: true
+    direct_target_response_v1:
+      status: failed_zero_of_16_independent_passes_do_not_promote
+      direct_target_statement_without_on_camera_pre_response_action: reject
+      staged_or_produced_scene: reroute_instructional_for_fresh_demo_audit
+      existing_bystander_signal_found: {uid: dailymotion__x7srler, action_end_second: 15.95, first_objection_second: 16.19}
+      note: the_single_witnessed_pass_replicates_existing_bystander_logic_not_the_proposed_target_expansion
+    title_plausibility_is_only_an_audit_sampling_signal: true
+  keep_rules:
+    require:
+      - concrete_social_action_visible
+      - on_scene_reaction_visible
+      - action_temporally_before_reaction
+      - complete_action_visible_before_first_reaction_speech
+      - reaction_causally_targets_action
+      - reaction_is_normative_not_generic_affect
+      - concrete_behavior_label_supported
+      - clean_complete_pre_reaction_demo
+      - authenticity_in_organic_or_hidden_camera_genuine
+      - audited_action_end_and_reaction_start_bounds
+    reaction_quote_must_not_be_source_actor_violation_or_excuse: true
+    generic_affect_never_sufficient: [surprise, profanity, pain, fear, confusion, excitement, prank_disclosure]
+    scripted_or_animation_with_visible_labeled_action: reroute_instructional_for_fresh_audit
+    reroute_is_not_acceptance: require_separate_instructional_v4_judgment
+    automatic_accept: false
+
+commentary:
+  evidence:
+    reviewed: 130
+    clean_accept: 13
+    accept_after_relabel: 59
+    reject: 58
+    source_disjoint_20260721_1335:
+      statements: 24
+      unique_source_videos: 24
+      context_seconds_each_side: 20
+      decisions: {clean_accept: 3, accept_after_relabel: 10, reject: 11, uncertain: 0}
+      event_usable_rate: 0.5417
+      current_norm_clean_rate: 0.125
+      usable_requiring_relabel_rate: 0.7692
+      top_overlapping_failures: {off_topic: 4, insufficient_context: 4, stance_without_behavior: 3, proposed_norm_mismatch: 3, behavior_without_stance: 3, bare_insult: 2, actor_missing: 2}
+      production_eligible: false
+      finding: same_event_commentary_is_often_usable_but_ten_of_thirteen_usable_statements_require_audited_semantic_relabeling
+      artifact: audit_runs/20260721_1335_source_disjoint/manual_summary.json
+    latest_expansion: {reviewed: 24, usable: 16, stored_norm_supported: 3, relabel: 13, reject: 8}
+    hourly_20260721_0418: {reviewed: 6, usable_from_detector_span_only: 0, all_query_source_instructional: true}
+    hourly_20260721_0504: {reviewed_with_context: 6, usable: 1, clean: 0, relabel: 1, reject: 5, all_query_source_instructional: true}
+    hourly_20260721_0613: {videos: 9, reviewed_with_context: 19, usable_statements: 8, clean: 1, relabel: 7, reject: 11, corrected_unique_event_clusters: 4, all_query_source_instructional: true}
+    hourly_20260721_082006:
+      videos: 5
+      statements_reviewed_with_context: 25
+      usable_statements: 16
+      clean: 0
+      relabel: 16
+      reject: 9
+      manually_retained_event_behavior_clusters: 11
+      all_query_source_instructional: true
+      by_source_video_usable: {xajolqq: "4/6", xyd7ep: "3/5", x2xztyj: "2/5", xxshiw: "4/4", x8cfukz: "3/5"}
+    event_cluster_shadow_v1:
+      accepted_statement_inputs: 8
+      source_videos_fully_reviewed: 3
+      model_clusters: 3
+      manually_corrected_clusters: 4
+      semantically_correct_source_clusterings: 2
+      overmerged_source_clusterings: 1
+      production_eligible: false
+      failure: explicit_separate_incidents_were_merged_by_shared_actor_and_norm
+    event_cluster_shadow_v2:
+      accepted_statement_inputs: 8
+      source_videos_fully_reviewed: 3
+      model_clusters: 4
+      manually_corrected_clusters: 4
+      semantically_correct_source_clusterings: 2
+      mispartitioned_source_clusterings: 1
+      exact_source_partition_accuracy: 0.6666666666666666
+      production_eligible: false
+      failure: aggregate_two_incident_commentary_was_partly_merged_into_one_concrete_incident
+    matched_query_source_confirmation:
+      instructional: {reviewed_with_context: 12, usable: 8, clean: 2, relabel: 6, reject: 4}
+      commentary: {reviewed_with_context: 12, usable: 5, clean: 2, relabel: 3, reject: 7}
+    hourly_20260721_111942_postbatch:
+      videos: 7
+      statements_reviewed_with_context: 26
+      clean: 6
+      relabel: 9
+      reject: 11
+      clean_rate: 0.2308
+      usable_after_relabel_rate: 0.5769
+      not_imported_into_authoritative_ledger: true
+      artifact: audit_runs/20260721_111942_hourly/commentary_statement_review.tsv
+    same_event_shadow_v3_20260721_111942:
+      source_videos: 7
+      statements_reviewed: 26
+      raw_contract: {pass: 14, fail_closed: 12, pass_rate: 0.5385}
+      effective_fail_closed: {accept: 2, true_accept: 2, false_accept: 0, true_reject: 11, false_negative: 13}
+      precision: 1.0
+      recall_of_manually_usable: 0.1333
+      production_eligible: false
+      finding: same_event_and_verbatim_evidence_contract_caught_the_observed_false_accept_but_requires_source_disjoint_replication_and_has_very_low_recall
+      artifact: audit_runs/20260721_111942_hourly/commentary_shadow_v3/manual_summary.json
+    same_event_shadow_v3_source_disjoint_replication_20260721_082006:
+      source_videos: 5
+      statements_reviewed: 25
+      prompt_unchanged: true
+      source_overlap_with_first_cohort: 0
+      raw_contract: {pass: 10, fail_closed: 15, pass_rate: 0.4}
+      effective_fail_closed: {accept: 0, true_accept: 0, false_accept: 0, true_reject: 9, false_negative: 16}
+      raw_false_accepts_caught_by_contract: 4
+      recall_of_manually_usable: 0.0
+      production_eligible: false
+      finding: source_disjoint_replication_retained_zero_outputs_so_positive_precision_did_not_replicate
+      artifact: audit_runs/commentary_shadow_v3_replication_082006/manual_summary.json
+  search_rules:
+    keep_text_only_by_default: true
+    commentary_visuals_require_separate_scene_audit: true
+    rank_down_hypotheses: [sports, accident, nonhuman_attack, technical_licensing, generic_reaction]
+    never_accept_from_title_or_query: true
+    query_source_is_not_acceptance: true
+    query_source_ranking:
+      taxonomy: {reviewed: 15, usable: 11, action: rank_up}
+      instructional: {reviewed: 87, usable: 46, action: retain_below_taxonomy}
+      commentary: {reviewed: 13, usable: 6, action: retain}
+      related: {reviewed: 9, usable: 4, action: retain}
+      note: ranking_never_bypasses_full_context_semantic_gate
+    detector_span_only_is_insufficient: require_expanded_transcript_context
+    behavior_and_stance_must_explicitly_refer_to_the_same_concrete_occurrence: true
+    victim_testimony_or_event_description_without_explicit_stance: reject
+    quoted_or_reported_conduct_requires_a_separately_grounded_normative_stance: true
+    multiple_statements_from_one_behavior_event: cluster_then_keep_only_the_strongest_grounded_behavior_stance_pair
+    cluster_exact_occurrences_not_shared_actor_and_norm: true
+    aggregate_multi_incident_commentary_is_not_a_member_of_one_constituent_incident: true
+  keep_rules:
+    visual_training_eligibility:
+      require: [specific_event_scene_on_camera, commentary_causally_labels_that_same_event, exact_scene_and_label_bounds, separate_scene_audit]
+      talking_head_or_graphics_only: text_reasoning_corpus_only
+      external_commentary_overlapping_scene: labeled_demo_tier_not_leakage_sensitive_evaluation
+      canonicalize_cross_pillar_source: prefer_instructional_when_the_source_intentionally_constructs_or_curates_a_demo
+      evidence: "The reviewed NYC street-harassment documentary has explicit commentary plus a separable real scene, while the Filipino TV package intentionally constructs three demos and is therefore canonical instructional rather than duplicate visual evidence in both pillars."
+    require_verbatim_grounding_for:
+      - concrete_actor_behavior_and_target_or_shared_context
+      - explicit_criticism_praise_rule_or_recommended_alternative
+      - behavior_and_stance_may_share_one_sentence_only_when_both_are_explicit
+    reject:
+      - generic_affect
+      - bare_insult_without_judgment_of_conduct
+      - behavior_only_event_summary
+      - moral_stance_without_concrete_behavior
+      - nonhuman_behavior
+      - technical_product_or_sports_performance
+      - accident_or_disaster_without_judged_social_conduct
+      - context_joining_different_listicle_items
+      - abstract_violation_category_without_a_concrete_act
+    detector_norm_as_final_label: false
+    accepted_output_requires:
+      - normalized_behavior
+      - normalized_norm
+      - behavior_evidence_quote
+      - stance_evidence_quote
+      - same_event_grounded
+      - verbatim_evidence_contract_pass
+    generic_detector_norms:
+      examples: [respect, safety, sensitivity, accountability]
+      final_label_status: reject_or_normalize_to_specific_judged_behavior
+      evidence: "Nine of 26 fully reviewed statements were usable only after replacing a generic or mismatched norm with the concrete behavior grounded in context."

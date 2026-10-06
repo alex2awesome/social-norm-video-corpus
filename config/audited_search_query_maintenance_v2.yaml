@@ -1,0 +1,92 @@
+version: audited_search_query_maintenance_v2
+active: true
+platform: dailymotion
+policy:
+  action: pause_zero_end_to_end_yield_only
+  retrieval_only: true
+  exact_query_match_only: true
+  preserve_query_rows: true
+  preserve_existing_videos: true
+  preserve_positive_yield_query_state: true
+  reversible_by_active_flag: true
+  query_text_is_never_a_label: true
+base_contract:
+  path: config/audited_search_queries_v1.yaml
+  sha256: 4f2b709c2c826865f438c597b8964c75f7df5c90057e73e2e8848511b86b1e0a
+dense_manual_audit:
+  sealed: audit_runs/20260724_fresh_scene_query_all_v1/sealed_selection.jsonl
+  sealed_sha256: 48230835bd8ba57a3e8420e80918cc37f6f0925b5748b00bc7f428aa05d18ff3
+  blind: audit_runs/20260724_fresh_scene_query_all_v1/manual_blind_review.jsonl
+  blind_sha256: e5d067dfd6839a8f3839bd274b3ab8d0e438bfdf02970888977f0e4ba7bf2b81
+  post: audit_runs/20260724_fresh_scene_query_all_v1/manual_post_reveal_adjudication.jsonl
+  post_sha256: 4713ea622e473536551c84b9d5768576dac635bd2c894916e5aebc6d1c97368e
+  manually_reviewed_units: 128
+  source_videos: 44
+  audit_method: every_routed_unit_blind_then_post_reveal
+decisions:
+  - query: sexual harassment office training acted vignette
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 4
+    strict_pass_units: 0
+    reviewed_units: 9
+  - query: police de escalation scenario role play training
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 2
+    strict_pass_units: 0
+    reviewed_units: 7
+  - query: sharing taking turns animated social story
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 6
+    strict_pass_units: 0
+    reviewed_units: 21
+  - query: taking turns social skills video model
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 2
+    strict_pass_units: 0
+    reviewed_units: 9
+  - query: classroom bullying bystander role play
+    decision: preserve_state
+    strict_pass_sources: 1
+    reviewed_sources: 4
+    strict_pass_units: 5
+    reviewed_units: 17
+  - query: dashcam compilation reaction commentary
+    decision: preserve_state
+    strict_pass_sources: 1
+    reviewed_sources: 1
+    strict_pass_units: 4
+    reviewed_units: 6
+  - query: dangerous driving dashcam reaction commentary
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 2
+    strict_pass_units: 0
+    reviewed_units: 3
+  - query: road rage dashcam breakdown reaction video
+    decision: preserve_state
+    strict_pass_sources: 2
+    reviewed_sources: 4
+    strict_pass_units: 3
+    reviewed_units: 9
+  - query: driving mistakes dashcam commentary original footage
+    decision: preserve_state
+    strict_pass_sources: 1
+    reviewed_sources: 7
+    strict_pass_units: 1
+    reviewed_units: 8
+  - query: surveillance footage abuse reaction commentary
+    decision: preserve_state
+    strict_pass_sources: 1
+    reviewed_sources: 11
+    strict_pass_units: 2
+    reviewed_units: 34
+  - query: caught on security camera commentary breakdown
+    decision: pause
+    strict_pass_sources: 0
+    reviewed_sources: 1
+    strict_pass_units: 0
+    reviewed_units: 5

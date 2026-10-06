@@ -1,0 +1,57 @@
+version: instructional_search_shadow_v1
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Read-only retrieval hypotheses derived from the reviewed failure distribution:
+# current instructional queries yield 14/228 usable source clips, while most
+# failures are lectures, technical lessons, or examples without an enacted demo.
+# Explicit demo vocabulary is retrieval-only and never supports acceptance.
+groups:
+  explicit_roleplay_v1:
+    - workplace discrimination role play scenario
+    - rude customer service role play scenario
+    - consent communication role play scenario
+    - bullying bystander intervention role play
+  explicit_video_modeling_v1:
+    - autism social skills video modeling conversation
+    - expected unexpected behavior social skills video
+    - classroom social story sharing taking turns
+    - conflict resolution acted scenario
+  explicit_observed_scenario_v1:
+    - what would you do discrimination scenario
+    - social experiment bystander intervenes bullying
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  exclude_already_seen: true
+  preserve_all_returned_candidates: true
+  title_filter_is_only_for_audit_sampling: true
+  sample_top_unseen_nonjunk_per_query: 2
+  title_or_query_can_never_accept: true
+  final_gate: full_instructional_v4_video_review
+  production_eligible_without_full_rank_sample_review: false
+  require_exact_demo_inside_the_accepted_clip: true
+  any_medium_allowed: true
+
+audit_result_20260721:
+  enumerated_titles_manually_reviewed: 200
+  selected_sources_rendered_and_reviewed: 16
+  dense_followups: {sources: 9, frames: 469, transcripts: 9, forced_language_reruns: 1}
+  exact_demo_artifacts: {rendered_and_reviewed: 7, frames: 112, accept: 7}
+  decisions: {accept_target_match: 4, reroute_usable_demo: 3, reject: 9}
+  yield: {target_matched_exact_demo: 0.25, recoverable_exact_demo: 0.4375}
+  supported_for_source_disjoint_replication_only:
+    - workplace discrimination role play scenario
+    - what would you do discrimination scenario
+    - social experiment bystander intervenes bullying
+  failed_or_reroute_only:
+    - rude customer service role play scenario
+    - consent communication role play scenario
+    - bullying bystander intervention role play
+    - expected unexpected behavior social skills video
+    - classroom social story sharing taking turns
+  production_eligible: false
+  corpus_mutated: false
+  evidence: audit_runs/instructional_search_shadow_v1_0721/video_audit/manual_summary.json

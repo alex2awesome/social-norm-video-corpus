@@ -1,0 +1,338 @@
+# Norm-violation search-term taxonomy.
+#
+# Derived 2026-06-02 from a synthesis of the academic norm literature (see
+# docs/norm_taxonomy_research.md for the full process + citations). Each
+# top-level key is a NORM CATEGORY; `frameworks` records which theories/datasets
+# motivate it (Moral Foundations Theory, Schwartz values, Brown & Levinson
+# politeness, Hall proxemics, Turiel social-domain, Cialdini, NormBank,
+# Social-Chem-101, NormVio, EgoNormia, NormAd, ...). `terms` are Dailymotion-
+# validated-style search phrases (video-title / bystander-reaction phrasings,
+# with colloquial variants).
+#
+# state.seed_taxonomy() seeds every term on dailymotion with source="taxonomy"
+# and category=<this key>. The category propagates: enumerate_video stamps it on
+# seen_videos, and a snowball HIT enqueues its dmrelated child WITH THE SAME
+# category -- so every clip (search-found or snowballed) traces to a norm class.
+#
+# To add/adjust: edit here and restart the main crawl (seeding is idempotent).
+
+categories:
+
+  proxemics_personal_space:
+    label: "Proxemics / personal space"
+    frameworks: [Hall-proxemics, EgoNormia-Proxemics, BrownLevinson-negative-face]
+    terms:
+      - "stranger stands too close"
+      - "personal space invaded"
+      - "close talker won't back up"
+      - "guy stands too close in line"
+      - "invading personal space caught"
+      - "man spreading on train"
+      - "puts bag on seat next to me"
+      - "crowding on empty train"
+      - "stop touching me stranger"
+      - "back up personal space"
+      - "creepy guy stands too close"
+      - "reclines seat into my lap"
+      - "feet on the seat in front"
+
+  queue_turn_taking:
+    label: "Queue / line-jumping / turn-taking"
+    frameworks: [MFT-Fairness, EgoNormia-Coordination, Cialdini-injunctive]
+    terms:
+      - "cut in line"
+      - "line cutter caught"
+      - "queue jumper"
+      - "skipped the queue"
+      - "pushed in front of everyone"
+      - "cuts the line at store"
+      - "jumps the line airport"
+      - "line cutting confrontation"
+      - "pushed onto train before letting off"
+      - "saving seats for everyone"
+      - "took two one per person"
+      - "barges ahead of people waiting"
+
+  politeness_courtesy:
+    label: "Politeness / basic courtesy"
+    frameworks: [BrownLevinson-positive-face, EgoNormia-Politeness, etiquette]
+    terms:
+      - "rude customer caught on camera"
+      - "no please or thank you"
+      - "let the door slam in her face"
+      - "snaps fingers at waiter"
+      - "rude to waitress"
+      - "interrupting talking over"
+      - "won't let anyone speak"
+      - "disrespectful customer"
+      - "rude to staff caught"
+      - "talked over everyone meeting"
+      - "ignored the greeting"
+
+  entitled_outburst:
+    label: "Entitled outbursts / public confrontation (Karen)"
+    frameworks: [NormVio-incivility, MFT-Liberty, Schwartz-Power]
+    terms:
+      - "karen freakout"
+      - "entitled customer tantrum"
+      - "demands to speak to manager"
+      - "screams at cashier"
+      - "customer meltdown"
+      - "lady screams at manager"
+      - "entitled woman public"
+      - "guy melts down at gate agent"
+      - "customer throws tantrum"
+      - "entitled parking freakout"
+      - "woman loses it in store"
+      - "public freakout entitled"
+
+  noise_phone_public:
+    label: "Noise / phone in shared space"
+    frameworks: [etiquette-noise, transit-etiquette, Cialdini-descriptive]
+    terms:
+      - "blasting music on the bus"
+      - "loud music no headphones"
+      - "phone speaker in public"
+      - "loud phone call quiet car"
+      - "playing tiktoks out loud train"
+      - "shouting in the library"
+      - "facetiming loud in restaurant"
+      - "phone goes off in theater"
+      - "talking loudly in movie theater"
+      - "blasting music neighbor night"
+      - "vaping in elevator"
+
+  hygiene_disgust:
+    label: "Hygiene / disgust / sanctity"
+    frameworks: [MFT-Sanctity, Turiel-taboo, etiquette-hygiene]
+    terms:
+      - "clips nails on the train"
+      - "sneezes without covering"
+      - "doesn't wash hands bathroom"
+      - "picks nose in public"
+      - "spits on the sidewalk"
+      - "takes shoes off on plane"
+      - "loud burping in cafe"
+      - "coughs in people's faces"
+      - "disgusting train passenger"
+      - "barefoot on the plane"
+      - "double dips the chip"
+
+  table_manners_dining:
+    label: "Table manners / dining conduct"
+    frameworks: [etiquette-table, Turiel-conventional]
+    terms:
+      - "chews with mouth open"
+      - "talks with food in mouth"
+      - "slurps loudly restaurant"
+      - "reaches across the table"
+      - "bad table manners"
+      - "rude at the dinner table"
+      - "kid throws food restaurant"
+      - "stiffs the waiter on tip"
+      - "camps the table for hours"
+      - "elbows on the table dinner"
+
+  safety_endangering:
+    label: "Safety / endangering others / reckless"
+    frameworks: [MFT-Care, EgoNormia-Safety, Schwartz-Security, HRI-physical-safety]
+    terms:
+      - "runs red light pedestrians crossing"
+      - "reckless driver almost hits"
+      - "speeds through crosswalk"
+      - "throws cigarette in dry grass"
+      - "dog off leash near kids"
+      - "climbs the safety barrier"
+      - "leans over cliff for selfie"
+      - "blocks the fire exit"
+      - "reckless e-bike on sidewalk"
+      - "dangerous driving caught on camera"
+      - "lets toddler near the pool"
+
+  privacy_surveillance:
+    label: "Privacy / filming / snooping / boundaries"
+    frameworks: [EgoNormia-Privacy, SBF, NormBank]
+    terms:
+      - "filming strangers without consent"
+      - "stop recording me"
+      - "reads over my shoulder"
+      - "neighbor spying through window"
+      - "going through someone's bag"
+      - "peeking at phone screen"
+      - "creep films woman in public"
+      - "posted my photo without asking"
+      - "shares private text group chat"
+      - "walks in without knocking"
+
+  theft_property:
+    label: "Theft / property damage / vandalism"
+    frameworks: [MFT-Fairness, Turiel-moral, Schwartz-Security]
+    terms:
+      - "porch pirate steals package"
+      - "shoplifter caught on camera"
+      - "grabs phone and runs"
+      - "steals the tip jar"
+      - "keys a parked car"
+      - "smashes the bus shelter"
+      - "graffiti on the storefront"
+      - "kicks over the trash cans"
+      - "package theft caught"
+      - "vandalism caught on camera"
+      - "stole my parking spot"
+
+  cheating_freeriding:
+    label: "Cheating / free-riding / not paying your share"
+    frameworks: [MFT-Fairness, Cialdini, reciprocity]
+    terms:
+      - "dodges the bus fare"
+      - "jumps the subway turnstile"
+      - "dine and dash caught"
+      - "skips out on the bill"
+      - "sneaks extra free samples"
+      - "express lane with full cart"
+      - "parks in disabled spot no permit"
+      - "takes up two parking spots"
+      - "hogs the gym equipment"
+      - "fare evasion caught"
+
+  dishonesty_scam:
+    label: "Dishonesty / lying / scamming"
+    frameworks: [MFT-Fairness, ETHICS, Social-Chem]
+    terms:
+      - "scammer tricks elderly woman"
+      - "caught faking an injury"
+      - "lies to the customer"
+      - "caught in a lie on camera"
+      - "street scam caught"
+      - "fake charity donation scam"
+      - "con artist caught"
+      - "caught cheating at the game"
+      - "fake directions on purpose"
+
+  authority_ritual:
+    label: "Disrespecting authority / sacred space / ritual"
+    frameworks: [MFT-Authority, MFT-Sanctity, Schwartz-Tradition, Hofstede-power-distance]
+    terms:
+      - "talks back to the cop"
+      - "ignores the security guard"
+      - "refuses to follow flight crew"
+      - "disrespects the teacher"
+      - "walks past do not enter sign"
+      - "talks loudly during funeral"
+      - "selfies at a memorial"
+      - "interrupts the wedding vows"
+      - "laughs during moment of silence"
+      - "heckler interrupts the speech"
+      - "phone rings during ceremony"
+
+  neglect_bullying:
+    label: "Failure to help / bullying / mocking the vulnerable"
+    frameworks: [MFT-Care, Schwartz-Benevolence, ProsocialDialog]
+    terms:
+      - "everyone walks past collapsed man"
+      - "ignores lost crying kid"
+      - "nobody helps her pick up"
+      - "kids mock disabled classmate"
+      - "boss humiliates employee"
+      - "laughing at homeless man"
+      - "bully picks on smaller kid"
+      - "nobody gives up seat for pregnant"
+      - "lets door slam on guy with crutches"
+      - "public shaming gone wrong"
+
+  discrimination_harassment:
+    label: "Discrimination / harassment / hate"
+    frameworks: [SBF, NormVio-hate, NormVio-harassment, MFT-Liberty]
+    terms:
+      - "racist rant on the bus"
+      - "refuses to serve customer race"
+      - "racist customer caught"
+      - "calls cops on black man"
+      - "homophobic rant caught"
+      - "racist confrontation caught"
+      - "discrimination caught on camera"
+      - "racist meltdown in public"
+      - "religious discrimination store"
+      - "catcalling on the street"
+      - "won't stop following her"
+
+  transit_flow_coordination:
+    label: "Coordination / transit flow / blocking"
+    frameworks: [EgoNormia-Coordination, EgoNormia-Communication, transit-etiquette]
+    terms:
+      - "blocks the escalator standing"
+      - "stops dead in the sidewalk"
+      - "blocks the train doors"
+      - "won't move down the aisle"
+      - "stands in front of elevator doors"
+      - "blocks the crosswalk with car"
+      - "bike on the crowded sidewalk"
+      - "blocks the whole aisle with cart"
+      - "won't take turns four way stop"
+      - "walks against the crowd subway"
+
+  reciprocity_ingratitude:
+    label: "Reciprocity / ingratitude / broken promises"
+    frameworks: [reciprocity, MFT-Loyalty, MFT-Fairness, Schwartz-Benevolence]
+    terms:
+      - "didn't say thank you for the gift"
+      - "never paid me back"
+      - "borrows and never returns it"
+      - "takes the last slice without asking"
+      - "never returns the favor"
+      - "shows up empty handed"
+      - "ghosts mid conversation walks off"
+      - "takes credit for my work"
+      - "throws his friend under the bus"
+      - "bails on his teammate"
+
+  cross_cultural_etiquette:
+    label: "Cross-cultural etiquette violations"
+    frameworks: [NormAd, NormSage, Hofstede, Gelfand-tightness-looseness]
+    terms:
+      - "shoes on inside their home"
+      - "used left hand to pass food"
+      - "tipping where it is rude"
+      - "points feet at elders"
+      - "refused the tea offended host"
+      - "cultural etiquette mistake"
+      - "rude gesture foreign country"
+      - "disrespects local custom"
+      - "wore shoes in the temple"
+
+  autonomous_vehicle:
+    label: "Bystander reactions to autonomous vehicles / Waymo"
+    frameworks: [EgoNormia-Coordination, HRI, AV-social-norms]
+    terms:
+      - "waymo blocks traffic"
+      - "waymo stuck in intersection"
+      - "driverless car blocks the road"
+      - "people yelling at waymo"
+      - "waymo runs red light"
+      - "robotaxi blocks the road"
+      - "crowd surrounds waymo"
+      - "guy blocks driverless car"
+      - "waymo gets coned"
+      - "waymo near miss pedestrian"
+      - "self driving car freakout"
+      - "waymo goes wrong way"
+      - "driverless car confused"
+      - "robotaxi malfunction caught on camera"
+      - "waymo blocks ambulance"
+      - "people react to self driving car"
+      - "waymo honking standoff"
+      - "cruise robotaxi stuck"
+      - "waymo vandalized"
+      - "driverless car almost hits pedestrian"
+      - "cruise driverless car blocks intersection"
+      - "zoox robotaxi caught on camera"
+      - "self driving car fails compilation"
+      - "people confront waymo passenger"
+      - "waymo stops in middle of road"
+      - "driverless car ignores traffic cop"
+      - "robotaxi drives into construction zone"
+      - "waymo surrounded by protesters"
+      - "self driving car reaction pedestrian"
+      - "tesla full self driving near miss reaction"
+      - "waymo blocks bus lane"
+      - "driverless taxi wrong way street reaction"

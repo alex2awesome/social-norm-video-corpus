@@ -1,0 +1,34 @@
+version: commentary_search_shadow_v2
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Source-disjoint replication of the v1 formats that yielded visually aligned
+# commentary windows: dashcam reaction videos and security/surveillance
+# reaction videos. Whole compilations are never datapoints; event windows are.
+groups:
+  dashcam_reaction_v2:
+    - dashcam compilation reaction commentary
+    - dangerous driving dashcam reaction commentary
+    - road rage dashcam breakdown reaction video
+    - driving mistakes dashcam commentary original footage
+  security_footage_reaction_v2:
+    - security camera incident reaction commentary
+    - surveillance footage abuse reaction commentary
+    - caught on security camera commentary breakdown
+    - reacts to security camera footage original video
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  preserve_all_returned_candidates: true
+  exclude_v1_source_uids_from_audiovisual_sample: true
+  title_filter_is_only_for_audit_sampling: true
+  title_or_query_can_never_accept: true
+  audit_low_title_plausibility_sample_per_query: 1
+  text_statement_gate: full_commentary_v2_grounding_review
+  visual_recovery_gate: full_source_video_and_target_window_review
+  require_statement_event_window_alignment: true
+  whole_compilation_acceptance_prohibited: true
+  caption_or_narration_only_is_not_visual_evidence: true
+  production_eligible_without_full_rank_sample_review: false

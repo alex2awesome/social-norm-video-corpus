@@ -1,0 +1,36 @@
+version: witnessed_search_shadow_v4
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Source-disjoint replication of the only two v3 source patterns with a
+# visually supported action followed by a response: package removal and
+# repeated unsafe/erratic driving. The label is constrained to observable
+# behavior; "drunk" and other latent-cause labels are prohibited.
+groups:
+  package_action_then_response_v4:
+    - package theft from porch security camera confrontation full video
+    - porch pirate exits house carrying package confronted video
+    - package thief homeowner tells put it down security camera
+    - stealing delivery package caught confronted full clip
+  unsafe_driving_then_response_v4:
+    - car swerving onto shoulder dashcam witness confrontation
+    - erratic driver dashcam followed and stopped witness
+    - unsafe driver weaving lane dashcam full video confronted
+    - dangerous driver stopped by witness dashcam original
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  preserve_all_returned_candidates: true
+  exclude_v3_source_uids_from_audiovisual_sample: true
+  title_filter_is_only_for_audit_sampling: true
+  title_or_query_can_never_accept: true
+  audit_low_title_plausibility_sample_per_query: 1
+  final_gate: full_witnessed_video_review_and_exact_splice_audit
+  action_must_be_visible_before_independent_causal_reaction: true
+  action_interval_must_be_long_enough_to_learn_from: true
+  reaction_is_private_label_evidence_only: true
+  latent_cause_labels_are_prohibited: true
+  relabel_only_to_directly_observable_behavior: true
+  production_eligible_without_full_rank_sample_review: false

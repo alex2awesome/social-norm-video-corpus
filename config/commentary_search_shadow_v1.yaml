@@ -1,0 +1,32 @@
+version: commentary_search_shadow_v1
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Read-only visual-recovery search hypotheses. Commentary text labels remain
+# valuable without footage; this shadow asks whether retrieval vocabulary can
+# preferentially surface videos containing original event cutaways, screen
+# demonstrations, or source footage instead of presenter-only discussion.
+groups:
+  original_footage_commentary_v1:
+    - reacts to rude customer caught on camera original video
+    - road rage video analysis original footage
+    - dashcam incident commentary reaction
+    - bodycam misconduct analysis full footage
+    - public confrontation breakdown caught on camera
+    - workplace discrimination reaction video original clip
+    - service worker abuse reaction video original clip
+    - social etiquette reaction video original clip
+
+selection_contract:
+  enumeration_only: true
+  state_database_mode: read_only
+  preserve_all_returned_candidates: true
+  title_filter_is_only_for_audit_sampling: true
+  title_or_query_can_never_accept: true
+  sample_top_unseen_episode_disjoint_nonjunk_per_query: 2
+  text_statement_gate: full_commentary_v2_grounding_review
+  visual_recovery_gate: full_source_video_and_target_window_review
+  accept_any_visually_self_contained_demo_medium: true
+  caption_or_narration_only_is_not_visual_evidence: true
+  production_eligible_without_full_rank_sample_review: false

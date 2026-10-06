@@ -1,0 +1,30 @@
+version: fresh_scene_search_shadow_v2
+active: false
+platform: dailymotion
+results_per_query: 20
+
+# Read-only retrieval experiment derived from the complete 128-unit
+# 2026-07-24 blind/post-reveal audit.  These queries are not crawl inputs.
+# Every returned source must be rendered and manually audited before any query
+# can enter the audited production contract.
+groups:
+  instructional_observed_activity:
+    - children cooperative play classroom observation
+    - children taking turns playground demonstration
+    - social skills role play full scenario
+    - workplace conflict role play full scene
+    - bystander intervention role play full scenario
+
+  commentary_event_footage:
+    - road rage dashcam reaction analysis
+    - security camera assault commentary footage
+    - caught on CCTV bad behavior commentary
+    - dashcam dangerous driving commentary original footage
+    - public confrontation footage explained
+
+  witnessed_organic_reaction:
+    - customer berates worker bystander steps in
+    - queue cutting bystander confronts caught on camera
+    - harassment bystander intervenes caught on camera
+    - public argument bystander intervenes camera
+    - road rage bystander reacts dashcam

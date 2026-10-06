@@ -1,0 +1,263 @@
+# Central runtime configuration. Paths are resolved relative to the project
+# root (the directory containing this `config/` folder) unless absolute.
+
+# --- yt-dlp / network ---
+network:
+  # IMPORTANT (measured 2026-06-01): YouTube bot-walls the Webshare *datacenter*
+  # proxies ("Sign in to confirm you're not a bot") on every player client, while
+  # sk3's own Stanford IP downloads fine with no cookies. So we default to DIRECT.
+  # Flip use_proxy: true only with residential proxies and/or a throwaway-account
+  # cookies_file, or if sk3's IP later gets rate-limited.
+  use_proxy: false            # master switch; false = direct from sk3 IP
+  # Proxy resolution order (when use_proxy): proxy_list_file (pool) -> proxy_env.
+  # Webshare exports "ip:port:user:pass" per line -> "http://user:pass@ip:port".
+  proxy_list_file: /lfs/skampere3/0/alexspan/.proxies-webshare.txt
+  proxy_env: YTDLP_PROXY      # single-URL fallback if the list is absent
+  proxy_scheme: http          # scheme to wrap Webshare entries with
+  cookies_file: null          # path to a Netscape cookies.txt (throwaway acct), or null
+  require_proxy: false        # if true, refuse to download with no proxy available
+  proxy_attempts: 6           # retry a yt-dlp call this many times, fresh proxy each
+  socket_timeout: 20          # bound how long a dead proxy can hang per attempt
+  limit_rate: "8M"            # cap download speed; raised 1500K->8M (2026-06-05) — 1.5MB/s was the main
+                              # download throttle; non-YouTube platforms have no bot-wall so full speed is fine
+  sleep_requests_min: 0       # --sleep-requests is randomized in [min, max]; cut 2-6 -> 0-2 for throughput
+  sleep_requests_max: 2       # (the per-request politeness sleep was adding latency to every download)
+  retries: 5
+  # Anti-bot for the cautious YouTube trial (rotated per yt-dlp call):
+  user_agents:
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15"
+    - "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0"
+    - "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1"
+  youtube_player_clients: ["android"]   # android is the only client that reliably downloads
+                                        # from sk3 direct (web/ios -> format errors, tv -> DRM); no bot-wall
+
+# --- search / candidate enumeration ---
+search:
+  results_per_query: 15       # ytsearchN
+  max_duration_sec: 1800      # skip videos longer than 30 min
+  max_height: 720             # bestvideo[height<=N]+bestaudio/best
+  skip_live: true
+
+# --- transcription (WhisperX) ---
+transcribe:
+  model: large-v3
+  language: null              # autodetect per-video (multilingual, 2026-06-25). WhisperX
+                              # aligns languages with a wav2vec2 model; others fall back to
+                              # segment-level pseudo-word timings (see transcribe._normalize).
+  device: cuda
+  device_index: 7             # pinned to GPU 7 to keep the whole scraper (crawl + :8017 detector)
+                              # consolidated on ONE GPU, freeing the rest for the lab (2026-06-04).
+                              # was 'auto' (freest at startup); revert to auto to spread across GPUs.
+  compute_type: float16
+  batch_size: 16
+  vad: true
+  align: true                 # word-level alignment (required for clipping)
+  diarize: false              # set true once HF token for pyannote is provided
+  hf_token_env: HF_TOKEN
+
+# --- youtube (Data API v3 for enumeration + rich metadata; yt-dlp downloads) ---
+youtube:
+  use_api: true                          # enumerate via Data API (official, no scraping) + store metadata
+  api_key_file: ~/.youtube-data-api-key.txt   # YouTube Data API v3 key (HOME=/lfs/.../alexspan on sk3)
+
+# --- reddit (Arctic Shift API enumeration; no auth needed) ---
+reddit:
+  allow_nsfw: false           # skip over_18 posts unless true
+  # Anchored full-text targets for the taxonomy-term sweep (rdsearch platform):
+  # Arctic Shift requires `query` to be paired with a subreddit, so each norm
+  # term is searched within these high-yield video subs. This is how the norm
+  # categories inform Reddit discovery + tag Reddit clips with a category.
+  search_subreddits:
+    - PublicFreakout
+    - ActualPublicFreakouts
+    - CrazyFuckingVideos
+    - AssholesInPublic
+    - IdiotsInCars
+    - instantkarma
+
+# --- enumeration API calls (Arctic Shift / Dailymotion / Odysee) ---
+api:
+  use_proxy: true             # route API GETs through the Webshare proxy pool
+  # Limit repeated calls during a known Arctic Shift outage. Query-level source
+  # failure cooldown provides the longer backoff.
+  host_attempt_limits:
+    arctic-shift.photon-reddit.com: 1
+                              # (Arctic Shift 403-rate-limits sk3's bare IP)
+
+# --- LLM-as-detector (self-hosted Llama-3.3-70B via vLLM) ---
+llm:
+  enabled: true               # run the LLM detector on every transcript
+  deferred: true              # GPU-FREE crawl (2026-06-11): the loop only enumerates+downloads
+                              # (status=pending_transcribe); transcription + detection run in the
+                              # BATCH pipeline (batch_pipeline.sh, cron) when the queue fills and a
+                              # big-enough GPU is free. Set false to revert to the resident-server flow.
+  endpoint: http://127.0.0.1:8017/v1/chat/completions
+  model: llama70b
+  timeout: 180
+  max_tokens: 1600
+  max_chars: 8000             # truncate very long transcripts sent to the LLM
+  keep_keywords: true         # also run the keyword detector and union matches
+
+# --- batch GPU pipeline (used when llm.deferred) ---
+# batch_pipeline.sh (hourly cron, flock'd) runs when the queue is big or stale:
+#   stage 1: batch_transcribe (WhisperX, norm-scraper env, ~10GB) -> pending_detect
+#   stage 2: batch_detect (offline vLLM LLM.chat, ai_usage env, ~95GB) -> routed
+# Each stage WAITS (polls nvidia-smi) until ANY GPU has enough free memory, then
+# exits when done -> the GPU is fully released between batches.
+batch:
+  min_backlog: 150            # run the pipeline once this many videos are queued...
+  max_age_hours: 4            # ...or the oldest queued video is older than this
+  max_pending: 3000           # crawl pauses when the queue exceeds this (disk guard)
+  min_free_gb_whisper: 14     # stage-1 GPU gate
+  min_free_gb_vllm: 110       # stage-2 GPU gate (FP8 70B weights + 8k ctx, headroom
+                              # over the ~100GB engine since others share the node)
+  engine_min_gb: 90           # stage-2 re-checks free mem right before engine init
+                              # (a job may grab the GPU between gate and load) and
+                              # exits gracefully below this -- rows stay pending
+  gpu_wait_minutes: 50        # how long a stage polls for a free GPU before giving
+                              # up (cron retries next hour; queue just keeps growing)
+  model_path: /lfs/skampere3/0/shared_hf_cache/models--nvidia--Llama-3.3-70B-Instruct-FP8/snapshots/fde04ee76a27704c88f569542ef023b57d4d0362
+  gpu_memory_utilization: 0.55  # fraction of TOTAL B200 mem (180GB*0.55=99GB) so the
+                                # engine fits inside the 100GB gate even on a shared GPU
+  max_model_len: 8192
+
+# --- audio-event channel (PANNs CNN14 SED: screams/gasps/commotion) ---
+# Pass A (batch_audio_events) scores every existing hit's audio and stamps
+# scream_peak/commotion_peak/interest into metadata.json -> interestingness
+# reranker. Scores are AudioSet-weak-label quality: ranking signal, not truth.
+audio_events:
+  device: cuda                # ~2GB VRAM; cpu works but ~10x slower
+  threshold: 0.12             # per-second sigmoid score to count as an event.
+                              # CALIBRATED 2026-06-12 on gold hits vs quiet controls:
+                              # AudioSet sigmoids are under-confident (screams peak
+                              # ~0.15-0.28); at 0.12 events align with LLM reaction
+                              # timestamps while quiet videos (peaks <0.1) stay silent.
+                              # Recall-oriented: peaks are stored, filter downstream.
+  chunk_sec: 60               # SED window fed to the model
+  overlap_sec: 5              # so events on a chunk boundary aren't halved
+  out_dir: data/audio_events  # per-video timeline jsons
+  recover_min_peak: 0.20      # Pass A2: vocal events at/above this peak, outside any
+                              # known reaction, become LLM-verified clip candidates
+  recover_max_per_video: 4    # cap candidate windows per video (highest peaks win)
+
+# --- detection + clipping ---
+clip:
+  pre_seconds: 20             # cut from t_react - pre to t_react + post (20s pre-roll)
+  post_seconds: 2
+  merge_window_sec: 22        # reactions closer than this share ONE clip (48% of consecutive
+                              # reactions were <22s apart -> per-reaction windows overlapped)
+  min_pre_roll_sec: 10        # drop a clip whose first reaction is < this far into the video
+                              # (truncated lead-up is useless for the anticipation task)
+  reencode_fallback: true     # if -c copy yields a bad cut, re-encode
+  context_window_sec: 5.0     # +/- seconds of transcript saved as match context
+  # Matched NEGATIVES for the anticipation task: for each positive pre-reaction
+  # window, cut same-length clips from ELSEWHERE in the SAME video that do not
+  # precede a reaction (controls for video-level confounds). Collect a POOL of
+  # 3-5 per positive now; later select HARD negatives (the calm windows whose
+  # embeddings are closest to the positives). Guard-zoned so negatives aren't
+  # secret lead-up/aftermath; evenly spread for temporal diversity. Spot-check.
+  negatives:
+    enabled: true
+    per_positive: 5           # pool of ~5 per positive (capped by non-reaction room) for later hard-neg mining
+    guard_sec: 20             # extra buffer (beyond the 20s pre-roll) a negative must keep from any reaction
+    max_per_video: 24         # safety cap per video
+    max_source_duration_sec: 240  # skip likely-COMPILATIONS (spot-checks: comps slipped under 360 at
+                                  # 349-356s; 240 catches them; single real incidents are usually shorter)
+    no_violation:
+      enabled: true
+      per_positive: 2
+      max_per_video: 6
+      min_window_sec: 6
+
+# --- scheduler: per-platform pick weighting (next_query) ---
+# Platform is picked by weight * staleness. Reddit yields fewer videos per pick
+# than dailymotion/rumble (smaller bursts, more already-seen), so weight its
+# pick-rate up to lift its throughput. Default weight (unlisted) = 1.0.
+scheduler:
+  platform_weights:
+    reddit: 0.25       # temporary outage-aware throttle (2026-08-06): Arctic Shift
+                       # exhausted every retry in the live crawl. Retain a trickle
+                       # because Reddit was historically clean, but do not let the
+                       # unavailable endpoint dominate request volume.
+    rumble: 0.0        # OFF (2026-06-11): rumble search now 403s on every request AND was 79%
+                       # COMMENTARY / 10% hit rate — pure wasted cycles. Re-enable (0.35) only
+                       # if the 403 block lifts. (Was 0.35, demoted from 1.0 on 2026-06-05.)
+    youtube: 0.75      # exact-new ordinary-norm canaries need enough rotation to
+                       # test YouTube's historically strong instructional yield;
+                       # zero-yield cooldown prevents repeated saturated searches.
+  # Balance retrieval intent before platform choice. These are review-candidate
+  # budgets, not assumed class priors or labels.
+  family_weights:
+    instructional: 1.0
+    witnessed: 1.0
+    commentary: 1.0
+    negative: 0.15
+  # A query returning only already-seen results cools down exponentially instead
+  # of immediately consuming another request. Source outages receive only the
+  # short failure cooldown and do not count as evidence of textual saturation.
+  zero_new_cooldown:
+    enabled: true
+    base_seconds: 21600          # 6 h for an exhausted/non-paginating query
+    pagination_base_seconds: 1800 # 30 min when another page may still be useful
+    source_failure_seconds: 900   # 15 min for empty/error responses
+    max_seconds: 259200           # cap at 72 h; never permanently deactivate
+  # User-directed content boundary: future discovery excludes police/law-
+  # enforcement confrontation themes. Existing rows are reversibly policy-
+  # excluded from scheduling; they are not deleted or deactivated.
+  blocked_query_patterns:
+    - '\bpolice\b'
+    - '\bcops?\b'
+    - '\bpolice officer\b'
+    - '\blaw enforcement\b'
+    - '\bsheriff\b'
+    - '\btrooper\b'
+    - '\btraffic stop\b'
+    - '\bbody[ -]?cam\b'
+    - '\barrest(?:ed|ing|s)?\b'
+
+# --- recommendation-snowball (follow related videos of hits; yt-scrape style) ---
+# A dailymotion HIT enqueues a `dmrelated` query (the hit's video id); the
+# related_dailymotion adapter then pulls that video's neighbors. A neighbor of a
+# norm-violation video is itself likely one, so the crawl follows the content
+# graph instead of running dry on search terms. Kept BREADTH-FIRST on the main
+# thread: equal priority (no depth boost) + a per-seed pagination cap, so volume
+# comes from many distinct seeds rather than drilling one neighborhood.
+snowball:
+  enabled: true
+  # Disabled after the source-disjoint 2026-08-08 transfer audit: a parent-side
+  # bystander gate selected 20 historical related children and 0/20 were
+  # confirmed strict witnessed clips (one remained uncertain). Existing media
+  # is preserved; only future Dailymotion graph propagation is stopped.
+  dailymotion_enabled: false
+  # Reddit snowball discovers subreddits carrying the same already-seen video;
+  # it is a separate mechanism and was not implicated by this audit.
+  reddit_enabled: true
+  priority: 0.6      # demoted 1.0->0.6 (QA 2026-06-18): the dailymotion 'related'
+                     # snowball is the #1 producer BUT the #1 scripted-media leak
+                     # (65% spot-check defect; drilled into a teleserye/skit/clickbait
+                     # neighborhood). Below seed(1.0) -> picked as idle-fill, less
+                     # neighborhood-drilling, while the channel blocklist removes its
+                     # worst re-uploaders. Tune back up if witnessed rate drops too far.
+  max_pages: 3       # cap pagination depth per seed video (0 = unlimited)
+
+# --- long-running loop ---
+loop:
+  eval_every: 20              # run query_generator after every N videos
+  min_hit_rate: 0.05          # drop a query below this rate...
+  max_videos_per_query: 50    # ...once it has processed this many videos
+  purge_raw_on_miss: true     # delete raw video when a video has 0 reactions
+  max_queue_size: 5000        # safety cap on the query queue
+
+# --- paths (relative to project root unless absolute) ---
+paths:
+  raw_video: data/raw_video
+  transcripts: data/transcripts
+  hits: data/hits
+  negatives: data/negatives      # matched no-reaction control clips (anticipation task)
+  discussion: data/discussion    # commentary/normative-reasoning labels
+  discussion_video: data/discussion_video  # retained full commentary source videos
+  instructional: data/instructional  # didactic teach-a-norm videos (demo + explanation)
+  metadata: data/metadata
+  state_db: data/state.db
+  logs: logs

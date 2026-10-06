@@ -1,0 +1,23 @@
+--- a/src/batch_detect.py
++++ b/src/batch_detect.py
+@@ -29,7 +29,7 @@
+ from . import detect_reactions, state
+ from .batch_transcribe import _find_raw
+ from .llm_detect import LLMDetector, InstructionalDetector
+-from .search_loop import finish_detection, resolve_llm_result
++from .search_loop import finish_detection, resolve_llm_result, saved_window_count
+ 
+ log = logging.getLogger("batch_llm")
+ 
+@@ -283,10 +283,11 @@
+     is_null = row["query_source"] == "null" or str(row["category"] or "").startswith("null_")
+     if is_null and str(verdict).startswith("drop:"):
+         from . import clip_extract
+-        n_null = clip_extract.save_null_verified(
++        saved_null = clip_extract.save_null_verified(
+             media, uid, cfg, url=cand.get("url"),
+             category=row["category"], prov=prov)
++        n_null = saved_window_count(saved_null)
+         state.finalize_null(conn, uid, n_null)
+         state.update_query_stats(conn, row["platform"], row["query"], 0, 0, 0)
+         counts["null_verified" if n_null else "null_empty"] = counts.get(

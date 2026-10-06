@@ -1,0 +1,124 @@
+# Bystander-reaction trigger phrases, matched case-insensitively on word
+# boundaries against the WhisperX word stream (see src/detect_reactions.py).
+#
+# Each entry under `patterns` is a group:
+#   tier:    1-4 precision tier (0 = profanity bucket, kept but tagged)
+#   type:    "literal" (escaped, matched with word boundaries) or "regex"
+#   items:   list of phrases / regexes (regex items are lowercased text with
+#            apostrophes preserved; use '' to encode a literal apostrophe in YAML)
+#   cooccur: (optional) {window: <sec>, with_tiers: [..]} -> a match in this
+#            group is only kept if another match from one of `with_tiers`
+#            (and itself not conditional) occurs within +/- window seconds.
+#   tag:     (optional) free label attached to every match (e.g. "profanity")
+
+patterns:
+  # ---------------- Tier 1: high-precision direct censure ----------------
+  - tier: 1
+    type: literal
+    items:
+      - "that's so rude"
+      - "that's rude"
+      - "how rude"
+      - "so rude"
+      - "how dare you"
+      - "how could you"
+      - "how could she"
+      - "how could he"
+      - "that's not okay"
+      - "that's not cool"
+      - "not cool"
+      - "uncool"
+      - "that's inappropriate"
+      - "inappropriate"
+      - "out of line"
+      - "way out of line"
+      - "you can't do that"
+      - "you can't say that"
+      - "you can't talk to"
+      - "you don't say that"
+      - "that was uncalled for"
+      - "uncalled for"
+      - "have some respect"
+      - "show some respect"
+      - "respect your"
+      - "shame on you"
+      - "shameful"
+      - "disgraceful"
+      - "disgusting behavior"
+      - "that's messed up"
+      - "that's wrong"
+      - "that's not right"
+
+  # ---------------- Tier 2: exclamatory / surprise censure ----------------
+  - tier: 2
+    type: literal
+    items:
+      - "excuse me"
+      - "i'm sorry what"
+      - "are you kidding"
+      - "are you serious"
+      - "you can't be serious"
+      - "is this for real"
+      - "what is wrong with you"
+      - "what's wrong with you"
+      - "what is your problem"
+      - "did you just"
+      - "did he just"
+      - "did she just"
+      - "i can't believe"
+      - "unbelievable"
+      - "wow just wow"
+      - "are you for real"
+      - "no way"
+      - "no he didn't"
+      - "no she didn't"
+
+  # "oh my god" is too noisy alone -> require a Tier-1 match within +/-3s
+  - tier: 2
+    type: literal
+    cooccur: {window: 3.0, with_tiers: [1]}
+    items:
+      - "oh my god"
+
+  # ---------------- Tier 3: thick reactions (norm-naming) ----------------
+  - tier: 3
+    type: literal
+    items:
+      - "in this house we"
+      - "in this family we"
+      - "not in public"
+  - tier: 3
+    type: regex
+    items:
+      - 'you (don''?t|can''?t|shouldn''?t) \w+ (in|at|to|with|around|in front of) \w+'
+      - 'we (don''?t|never) \w+ (at|in|around|in front of) \w+'
+      - 'that''?s not how (you|we) \w+'
+      - 'you (don''?t|can''?t) \w+ at the table'
+      - 'you shouldn''?t \w+ in public'
+
+  # ---------------- Tier 4: vocative censure (needs Tier 1/2 within 5s) ----
+  - tier: 4
+    type: literal
+    cooccur: {window: 5.0, with_tiers: [1, 2]}
+    items:
+      - "sir"
+      - "ma'am"
+      - "young man"
+      - "young lady"
+      - "watch your mouth"
+      - "watch your tone"
+      - "watch it"
+      - "language"
+      - "easy"
+      - "settle down"
+      - "calm down"
+
+  # ---------------- Profanity-laden censure (kept, tagged separately) ----
+  - tier: 0
+    type: literal
+    tag: profanity
+    items:
+      - "what the hell"
+      - "wtf"
+      - "the fuck"
+      - "are you fucking serious"
